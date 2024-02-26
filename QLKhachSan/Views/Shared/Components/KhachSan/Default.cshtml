@@ -1,0 +1,25 @@
+﻿@model IEnumerable<QLKhachSan.ViewModels.KhachSanVM>
+@foreach (var item in Model)
+{
+    <div class="swiper-slide">
+        <div class="card-intro d-block" style="background-image: url(@Url.Content($"~/img/Images/{item.Anh}"));">
+            <div class="card-price"><span class="mr-1">from</span><span class="count text-secondary">300$</span></div>
+            <div class="card-intro__footer">
+                <h4 class="h4 f-primary">@item.TenKS</h4>
+                <div class="card-intro__local d-flex align-items-center"><i class="icon icon-label mr-1"></i><span>@item.DiaChi, Việt Nam</span></div>
+                <div class="card-intro__rating">
+                    <select class="js-rating-stat" data-current-rating="4">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4" selected="selected">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-hover">
+                <h3 class="h3 text-uppercase">@item.TenKS</h3><a class="btn btn-light btn--round card-hover__view" asp-controller="Home" asp-action="ChiTietKS" asp-route-MaKS="@item.MaKS">VIEW</a>
+            </div>
+        </div>
+    </div>
+}

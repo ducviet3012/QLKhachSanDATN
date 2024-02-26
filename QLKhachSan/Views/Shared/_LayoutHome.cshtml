@@ -1,0 +1,491 @@
+﻿<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<!-- Mirrored from netgon.ru/themeforest/yourtravelworld_html/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 26 Jan 2024 14:50:36 GMT -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Looking for something amazing?">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="HandheldFriendly" content="True">
+    <title>Your Travel World </title>
+    <!-- Edge and IE-->
+    <meta name="msapplication-tap-highlight" content="no">
+    <!-- Add to homescreen for Chrome on Android-->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Looking for something amazing?">
+    <link rel="icon" sizes="192x192" href="~/img/touch/chrome-touch-icon-192x192.png">
+    <!-- Add to homescreen for Safari on iOS-->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Your Travel World">
+    <link rel="apple-touch-icon" href="~/img/touch/apple-touch-icon.png">
+    <!-- Google Fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,500,600,700%7CPoppins:400,500,600,700" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/jquery-ui.structure.min.css">
+    <link rel="stylesheet" href="~/css/jquery-ui.theme.min.css">
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <link id="cssRtl" rel="stylesheet" href="#">
+    <link rel="stylesheet" href="~/css/flatpickr.min.css">
+    <link rel="stylesheet" href="~/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/css/fontawesome-stars-o.css">
+    <link rel="stylesheet" href="~/css/swiper.min.css">
+    <link rel="stylesheet" href="~/css/jquery.mCustomScrollbar.min.css">
+    <link rel="stylesheet" href="~/css/select2.min.css">
+    <link rel="stylesheet" href="~/css/nouislider.min.css">
+    <link rel="stylesheet" href="~/css/blueimp-gallery.min.css">
+    <link rel="stylesheet" href="~/style.min.css">
+    <link id="cssTheme" rel="stylesheet" href="~/skins/style-default.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="load">
+    <div class="progress-load js-progress-load"></div>
+    <div class="demo-panel bx4dp d-none d-sm-block" id="demoSwitcher">
+        <div class="container">
+            <div class="demo-panel__toggle btn btn-light text-primary shadow-sm js-panel-toggle"><i class="fa fa-cog"></i></div>
+        </div>
+        <div class="demo-panel__content bg-light pt-3">
+            <div class="container">
+                <div class="row flex-nowrap">
+                    <div class="col-auto mb-2 d-flex align-items-center">
+                        <h4>Colors</h4>
+                        <div class="demo-panel__colors nav">
+                            <a class="nav-link js-toggle-theme is-active" href="#" data-path="skins/style-default.css" role="button"></a><a class="nav-link js-toggle-theme" href="#" data-path="skins/style-orange.css" role="button"></a><a class="nav-link js-toggle-theme" href="#" data-path="skins/style-green.css" role="button"></a><a class="nav-link js-toggle-theme" href="#" data-path="skins/style-red.css" role="button"></a><a class="nav-link js-toggle-theme" href="#" data-path="skins/style-purple.css" role="button"></a><a class="nav-link js-toggle-theme" href="#" data-path="skins/style-pink.css" role="button"></a>
+                        </div>
+                    </div>
+                    <div class="col-auto mb-2 d-flex align-items-center">
+                        <h4>RTL</h4>
+                        <button class="btn-switch text-primary js-switch-rtl" type="button" data-switch="css/bootstrap-rtl.min.css"><span class="bar bg-primary"></span><span class="toggle bg-secondary"></span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-account modal" id="modalAccount" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            @await Html.PartialAsync("_PartialLogin_SignUp")
+        </div>
+    </div>
+    <header class="page-header">
+        <div class="panel-fixed">
+            <div class="page-header__top bg-white js-header-top js-top-panel">
+                <div class="container">
+                    <div class="row justify-content-center justify-content-between">
+                        <div class="col-12 col-md col-lg-3 d-flex justify-content-center justify-content-md-start">
+                            <a class="navbar-logo d-inline-flex align-items-center" href="index.html">
+                                <img class="img-fluid mr-3" src="~/img/logo.png" alt="#" />
+                                <h4 class="m-0">Your Travel World</h4>
+                            </a>
+                        </div>
+                        <div class="col col-lg-6 d-none d-md-flex align-items-center justify-content-center">
+                            <a class="page-header__call d-flex align-items-center text-nowrap" href="tel:880000112222333">
+                                <i class="icon icon-call js-tooltip-call mr-3" data-toggle="tooltip" data-placement="bottom" title="Support 8-800-0011-2222-333"></i>
+                                <div class="page-header__call-right">
+                                    <div class="title fz-small">Support</div>
+                                    <div class="phone fw-bold">0987654321</div>
+                                </div>
+                            </a>
+                            <div class="page-header__top-search d-none d-lg-block ml-4" id="navbarSearch">
+                                <form class="navbar-search" action="#" method="GET">
+                                    <div class="input-group flex-nowrap">
+                                        <input class="form-control pr-0 js-navbar-search-input" type="search" placeholder="Search on site" />
+                                        <div class="input-group-append">
+                                            <button class="navbar-search__subject btn btn-light" type="button"><i class="fa fa-search text-gray"></i></button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col col-lg-3 d-none d-md-flex">
+                            <ul class="nav nav-panel">
+                                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                                {
+                                    <a asp-action="ProFile" asp-controller="KhachHang" class="my-auto">
+                                                <span>@User.Identity.Name</span>
+                                                <i class="fa fa-user" style="font-size:36px"></i>
+                                            </a>
+                                }else{
+                                <li class="nav-item d-flex">
+                                    <a class="nav-link btn btn-light js-toggle-account" href="#modalAccount" data-toggle="modal" role="button" data-account="login"><i class="text-gray icon icon-user mr-2"></i><span>log in</span></a>
+                                </li>
+                                <li class="nav-item d-flex">
+                                    <a class="nav-link btn btn-light js-toggle-account" href="#modalAccount" data-toggle="modal" role="button" data-account="regist"><i class="text-gray icon icon-login mr-2"></i><span>sign up</span></a>
+                                </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="btn-toggle btn btn-light d-lg-none btn-toggle-nav" type="button" data-toggle="collapse" data-target="#navPanel"><span class="icon-bar"></span></button>
+        <nav class="main-nav d-flex collapse d-lg-block" id="navPanel">
+            <div class="main-nav__container d-flex">
+                <div class="container">
+                    <div class="d-lg-none">
+                        <div class="main-nav__search">
+                            <form class="navbar-search" action="#" method="GET">
+                                <div class="input-group flex-nowrap">
+                                    <input class="form-control pr-0 js-navbar-search-input" type="search" placeholder="Search on site" />
+                                    <div class="input-group-append">
+                                        <button class="navbar-search__subject btn btn-light" type="button"><i class="fa fa-search text-gray"></i></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <ul class="nav nav-panel">
+                            <li class="nav-item d-flex">
+                                <a class="nav-link btn btn-light js-toggle-account" href="#modalAccount" data-toggle="modal" role="button" data-account="login"><i class="text-gray icon icon-user mr-2"></i><span>log in</span></a>
+                            </li>
+                            <li class="nav-item d-flex">
+                                <a class="nav-link btn btn-light js-toggle-account" href="#modalAccount" data-toggle="modal" role="button" data-account="regist"><i class="text-gray icon icon-login mr-2"></i><span>sign up</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <ul class="main-nav__list nav d-flex" id="navMenu">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link fw-bold text-uppercase" asp-controller="Home" asp-action="Index"><span>home</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold text-uppercase" href="hotel.html"><span>Hotel</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold text-uppercase" href="category.html"><span>best seller</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold text-uppercase" href="about.html"><span>about us</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold text-uppercase" href="contacts.html"><span>contacts</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main class="page-main">
+        <section class="intro d-flex flex-column load">
+            <div class="intro__bg js-intro-bg">
+                <div class="over"></div>
+                <div class="swiper-container js-intro-slider-bg">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide"><img class="img-cover" src="~/img/intro/item-1.jpg" alt="#"></div>
+                        <div class="swiper-slide"><img class="img-cover" src="~/img/intro/item-2.jpg" alt="#"></div>
+                        <div class="swiper-slide"><img class="img-cover" src="~/img/intro/item-3.jpg" alt="#"></div>
+                        <div class="swiper-slide"><img class="img-cover" src="~/img/intro/item-4.jpg" alt="#"></div>
+                        <div class="swiper-slide"><img class="img-cover" src="~/img/intro/item-5.jpg" alt="#"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="intro__desc js-intro-slider-desc swiper-container">
+                <div class="swiper-wrapper align-items-center">
+                    <div class="swiper-slide">
+                        <div class="container w-100 text-center">
+                            <div class="row">
+                                <div class="col-12 col-lg-10 mx-auto">
+                                    <h4 class="h4 intro__caption prlx-scroll">Looking for something amazing?</h4>
+                                    <h1 class="h1 intro__title prlx-scroll">your best trip</h1>
+                                    <p class="prlx-scroll">
+                                        we have collected the best offers in
+                                        <span class="js-counter">4 217</span>
+                                        accommodation options - to see them, just enter the dates!
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="container w-100 text-center">
+                            <div class="row">
+                                <div class="col-12 col-lg-10 mx-auto">
+                                    <h4 class="h4 intro__caption prlx-scroll">We offer a variety of services and options</h4>
+                                    <h1 class="h1 intro__title prlx-scroll">discover places</h1>
+                                    <p class="prlx-scroll">
+                                        we have collected the best offers in
+                                        <span class="js-counter">4 217</span>
+                                        accommodation options - to see them, just enter the dates!
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="container w-100 text-center">
+                            <div class="row">
+                                <div class="col-12 col-lg-10 mx-auto">
+                                    <h4 class="h4 intro__caption prlx-scroll">Visit museum with a dedicated tour guide</h4>
+                                    <h1 class="h1 intro__title prlx-scroll">city tours</h1>
+                                    <p class="prlx-scroll">
+                                        we have collected the best offers in
+                                        <span class="js-counter">4 217</span>
+                                        accommodation options - to see them, just enter the dates!
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="container w-100 text-center">
+                            <div class="row">
+                                <div class="col-12 col-lg-10 mx-auto">
+                                    <h4 class="h4 intro__caption prlx-scroll">City tours / tour tickets / tour guides</h4>
+                                    <h1 class="h1 intro__title prlx-scroll">more tours</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="container w-100 text-center">
+                            <div class="row">
+                                <div class="col-12 col-lg-10 mx-auto">
+                                    <h4 class="h4 intro__caption prlx-scroll">Looking for something amazing?</h4>
+                                    <h1 class="h1 intro__title prlx-scroll">Your travel tours</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="intro__btn-scroll js-intro-btn-jump" type="button"><span></span></button>
+            </div>
+            <div class="intro__content d-flex flex-column justify-content-end js-intro-content">
+                <div class="intro__search">
+                    <div class="container">
+                        <div class="search-hotels shadow-sm">
+                            <ul class="search-hotels__tabs nav nav-tabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#tabHotel" role="tab" aria-controls="tabHotel" aria-selected="false"><span class="d-none d-md-block">Hotel</span><i class="icon icon-building d-md-none mx-1 text-secondary"></i></a>
+                                </li>
+                            </ul>
+                            @await Html.PartialAsync("_PartialSearchHotel")
+                        </div>
+                    </div>
+                </div>
+                <div class="intro__hotels">
+                    <div class="container-fluid p-0">
+                        <div class="swiper-container js-intro-hotels">
+                            <div class="swiper-wrapper">
+                                @await Component.InvokeAsync("KhachSan")
+                            </div>
+                        </div>
+                        <div class="intro__hotels-controls">
+                            <button class="btn btn-primary btn-nav btn-nav--left js-prev" type="button"><i class="fa fa-angle-left"></i></button>
+                            <button class="btn btn-primary btn-nav btn-nav--right js-next" type="button"><i class="fa fa-angle-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="page-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <div class="section-header">
+                            <h2 class="h2">Popular destinations around the world</h2>
+                            <div class="section-header__stars mb-3"><i class="fa fa-star"></i><i class="fa fa-star center"></i><i class="fa fa-star"></i></div>
+                            <p class="fz-norm mb-0"><em>The best choice of hotels we have</em></p>
+                        </div>
+                    </div>
+                </div>
+                @RenderBody()
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <div class="section-header">
+                            <h2 class="h2">The opportunities we provide</h2>
+                            <div class="section-header__stars mb-3"><i class="fa fa-star"></i><i class="fa fa-star center"></i><i class="fa fa-star"></i></div>
+                            <p class="fz-norm mb-0"><em>Explore the features and benefits of our service</em></p>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 d-flex mb-4">
+                        <div class="card card-service w-100 mb-2">
+                            <div class="card-header">
+                                <h4 class="h4">Handpicked Hotels</h4>
+                            </div>
+                            <div class="card-body">
+                                <p>All hotels on our website are tested according to various criteria. You can be sure of your choice.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 d-flex mb-4">
+                        <div class="card card-service w-100 mb-2">
+                            <div class="card-header">
+                                <h4 class="h4">Detailed Descriptions</h4>
+                            </div>
+                            <div class="card-body">
+                                <p>In order for you to have the most complete idea about the hotel, we try to collect the most complete and detailed description.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 d-flex mb-4">
+                        <div class="card card-service w-100 mb-2">
+                            <div class="card-header">
+                                <h4 class="h4">Best Price Guarantee</h4>
+                            </div>
+                            <div class="card-body">
+                                <p>We offer the best hotels at the best prices. If you find the same room category on the same dates cheaper elsewhere, we will refund the difference. </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 d-flex mb-4">
+                        <div class="card card-service w-100 mb-2">
+                            <div class="card-header">
+                                <h4 class="h4">Secure Booking</h4>
+                            </div>
+                            <div class="card-body">
+                                <p>Book hotels with us easily and safely. All data on your credit card is encrypted and secure. You can be calm for your means.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 d-flex mb-4">
+                        <div class="card card-service w-100 mb-2">
+                            <div class="card-header">
+                                <h4 class="h4">Better service</h4>
+                            </div>
+                            <div class="card-body">
+                                <p>Our specialists visit various hotels to personally assess their quality and provide you with a detailed review.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 d-flex mb-4">
+                        <div class="card card-service w-100 mb-2">
+                            <div class="card-header">
+                                <h4 class="h4">Any Questions?</h4>
+                            </div>
+                            <div class="card-body">
+                                <p>Call us at 8-800-2000-6000 and we will answer your questions, help you find a hotel and make a reservation. Working 24/7</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary btn-nav btn-nav--up js-scroll-up" type="button"><i class="fa fa-angle-up"></i></button>
+        </div>
+    </main>
+    <footer class="page-footer">
+        <div class="page-footer__cover jarallax" data-speed="0.5"><img class="jarallax-img" src="~/img/footer.jpg" alt="#"></div>
+        <div class="container mb-5 mb-lg-4">
+            <div class="row">
+                <div class="col-12 col-sm-6 col-lg-4 mt-5">
+                    <h3 class="h3 text-uppercase">your travel world</h3>
+                    <ul class="page-footer__address">
+                        <li class="mb-2">
+                            <strong class="float-left mr-1">A:</strong>
+                            314-336 Bourke St, Melbourne VIC 3000, Australia
+                        </li>
+                        <li class="mb-2">
+                            <strong class="float-left mr-1">P:</strong>
+                            24/7 customer support:
+                            <a href="tel:#">1-222-2222-22-22</a>
+                        </li>
+                        <li class="mb-2">
+                            <strong class="float-left mr-1">E:</strong>
+                            <a href="mailto:#">Yourtravel@gmail.com</a>
+                        </li>
+                    </ul>
+                    <h4 class="h4 mb-2">Follow us:</h4>
+                    <ul class="footer-social d-flex flex-wrap">
+                        <li class="mr-4"><a class="social-link" href="#" target="_blank"><i class="fa fa-facebook"></i></a></li>
+                        <li class="mr-4"><a class="social-link" href="#" target="_blank"><i class="fa fa-twitter"></i></a></li>
+                        <li class="mr-4"><a class="social-link" href="#" target="_blank"><i class="fa fa-instagram"></i></a></li>
+                        <li class="mr-4"><a class="social-link" href="#" target="_blank"><i class="fa fa-youtube"></i></a></li>
+                        <li class="mr-4"><a class="social-link" href="#" target="_blank"><i class="fa fa-whatsapp"></i></a></li>
+                    </ul>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-4 mt-5">
+                    <h3 class="h3 text-uppercase">customer support</h3>
+                    <ul class="page-footer__support list-styled">
+                        <li class="mb-2"><a href="#" target="_blank">Faq</a></li>
+                        <li class="mb-2"><a href="#" target="_blank">How do I make a reservation?</a></li>
+                        <li class="mb-2"><a href="#" target="_blank">Payment options</a></li>
+                        <li class="mb-2"><a href="#" target="_blank">Booking tips</a></li>
+                    </ul>
+                </div>
+                <div class="col-12 col-sm-12 col-lg-4 mt-5">
+                    <h3 class="h3 text-uppercase">get our best offers</h3>
+                    <form class="subscribe-form" action="#" method="POST">
+                        <div class="input-group input-group--lg flex-nowrap mb-4">
+                            <input class="form-control form-control-lg" type="email" placeholder="Enter Your email" required>
+                            <div class="input-group-append">
+                                <button class="btn btn-btn btn-light btn--round" type="submit">
+                                    <i class="fa fa-send"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <p>We guarantee your confidentiality, and we also undertake not to transfer your email address to third parties.</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="page-footer__copyright text-center">
+            <div class="container">
+                <div class="hr"></div>YourTravelWorld ltd. All rights reserved.<br /><a class="text-light text-uppercase" href="https://themeforest.net/user/netgon">
+                    Copyright by Netgon
+                    <script>document.write(new Date().getFullYear());</script>
+                </a>
+            </div>
+        </div>
+    </footer>
+    <div class="modal-map modal" id="modalMap" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header align-items-center py-2">
+                    <h4 class="modal-title"><a class="d-flex align-items-center" href="hotel.html"><i class="icon mr-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 31.5 22.1"><path d="M0.3,10.3C0.3,10.3,0.3,10.3,0.3,10.3c-0.4,0.5-0.4,1.2,0,1.6l10,10c0,0,0,0,0,0c0.4,0.4,1.1,0.4,1.6,0 c0.4-0.4,0.4-1.1,0-1.6l-8-8h26.6c0.6,0,1.1-0.5,1.1-1.1c0,0,0,0,0,0c0-0.6-0.5-1.1-1.1-1.1H3.8l8-8c0.4-0.4,0.4-1.1,0-1.6 c0,0,0,0,0,0c-0.4-0.4-1.1-0.4-1.6,0L0.3,10.3z" /></svg></i><span class="title">Hotel</span></a></h4>
+                    <button class="btn btn-secondary btn--round px-4" type="button" data-dismiss="modal">
+                        map close
+                    </button>
+                </div>
+                <div class="map-contain" id="map"></div>
+            </div>
+        </div>
+    </div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3gFKhVywUkygSxQEBdGVrI5-ZRrdjueA"></script>
+    <script src="~/js/maps.js"></script>
+    <script src="~/js/libs/moment.min.js"></script>
+    <script src="~/js/libs/wNumb.js"></script>
+    <script src="~/js/libs/nouislider.min.js"></script>
+    <script src="~/js/libs/jquery.min.js"></script>
+    <script src="~/js/libs/jquery-ui.min.js"></script>
+    <script src="~/js/libs/barba.min.js"></script>
+    <script src="~/js/libs/sticky-kit.min.js"></script>
+    <script src="~/js/libs/velocity.min.js"></script>
+    <script src="~/js/libs/velocity.ui.min.js"></script>
+    <script src="~/js/libs/jquery.waypoints.min.js"></script>
+    <script src="~/js/libs/popper.min.js"></script>
+    <script src="~/js/libs/bootstrap.min.js"></script>
+    <script src="~/js/libs/imagesloaded.pkgd.min.js"></script>
+    <script src="~/js/libs/masonry.pkgd.min.js"></script>
+    <script src="~/js/libs/isotope.pkgd.min.js"></script>
+    <script src="~/js/libs/ofi.min.js"></script>
+    <script src="~/js/libs/jarallax.min.js"></script>
+    <script src="~/js/libs/jarallax-video.min.js"></script>
+    <script src="~/js/libs/jarallax-element.min.js"></script>
+    <script src="~/js/libs/jquery.mCustomScrollbar.min.js"></script>
+    <script src="~/js/libs/swiper.min.js"></script>
+    <script src="~/js/libs/flatpickr/flatpickr.min.js"></script>
+    <script src="~/js/libs/flatpickr/rangePlugin.js"></script>
+    <script src="~/js/libs/select2.min.js"></script>
+    <script src="~/js/libs/select2/en.js"></script>
+    <script src="~/js/libs/jquery.mask.min.js"></script>
+    <script src="~/js/libs/validator.min.js"></script>
+    <script src="~/js/libs/jquery.barrating.min.js"></script>
+    <script src="~/js/libs/jquery.blueimp-gallery.min.js"></script>
+    <script src="~/js/script.min.js"></script>
+    <script src="~/js/demo-switcher.js"></script>
+</body>
+
+<!-- Mirrored from netgon.ru/themeforest/yourtravelworld_html/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 26 Jan 2024 14:52:46 GMT -->
+</html>
+
+@{
+    // Nhận tham số từ Controller để xác định xem modal có cần hiển thị không
+    var showLoginModal = ViewData["ShowLoginModal"] as bool? ?? false;
+}
+
+@if (showLoginModal)
+{
+    <script>
+        $(document).ready(function () {
+            // Hiển thị modal đăng nhập khi trang được tải lần đầu tiên
+            $('#modalAccount').modal('show');
+        });
+    </script>
+}

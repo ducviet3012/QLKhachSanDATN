@@ -1,0 +1,123 @@
+﻿@model QLKhachSan.ViewModels.BookingVM
+@{
+    ViewData["Title"] = "ConfirmBooking";
+    Layout = "_LayoutCheckOut";
+}
+<div class="container">
+    <div class="row">
+        <aside class="sidebar col-lg-3 order-1 order-lg-0">
+            <div class="sidebar__content js-sticky-top">
+                <section class="sidebar__card card">
+                    <div class="sidebar__card-title">
+                        <h4 class="card-title mb-1">Ravena Best Hotel</h4>
+                        <ul class="sidebar__card-meta d-flex align-items-center">
+                            <li>
+                                <div class="rating">
+                                    <select class="js-rating-stat" data-current-rating="5">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5" selected="selected">5</option>
+                                    </select>
+                                </div>
+                            </li>
+                            <li class="likes ml-auto text-nowrap"><i class="mr-1 icon icon-thumbs-up"></i><span>8/10</span></li>
+                        </ul>
+                        <hr class="my-3 mt-2" />
+                    </div>
+                    <ul class="sidebar__payment">
+                        <li class="d-inline-block align-top mr-5 mb-2">
+                            <div class="fw-bold">Rooms</div>
+                            <ul>
+                                <li>@Model.tenphong </li>
+                            </ul>
+                        </li>
+                        <li class="d-inline-block align-top mr-5 mb-2">
+                            <div class="fw-bold">Check-in date</div>
+                            <ul>
+                                <li>@Model.ngayden</li>
+                            </ul>
+                        </li>
+                        <li class="d-inline-block align-top mr-5 mb-2">
+                            <div class="fw-bold">Check-out date</div>
+                            <ul>
+                                <li>@Model.ngaydi</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <hr class="mt-2">
+                    <ul class="sidebar__payment-total">
+                        <li class="h4 fw-bold f-primary mb-0">Total Price: @Model.thanhtien €</li>
+                        <li>VAT (20%) included</li>
+                    </ul>
+                </section>
+                <section class="sidebar__card card">
+                    <div class="sidebar__card-title">
+                        <h4 class="card-title mb-1">Need Help Booking?</h4>
+                        <hr class="my-3 mt-2" />
+                    </div>
+                    <p>Call our customer services team on the number below to speak to one of our advisors who will help you with all of your holiday needs.</p>
+                    <ul class="sidebar__contacts">
+                        <li class="d-flex align-items-center"><i class="icon icon-phone mr-2"></i><a class="fw-bold" href="tel:#">8-800-0011-2222-333</a></li>
+                    </ul>
+                </section>
+            </div>
+        </aside>
+        <div class="col-lg-9 d-flex" id="barba-wrapper">
+            <div class="barba-container">
+                <div class="booking-card card">
+                    <div class="card-body">
+                        <div class="booking-card__title">
+                            <h2>Xác nhận đặt phòng</h2>
+                            <hr class="mb-4">
+                        </div>
+                        <div class="d-flex flex-wrap align-items-center mb-4">
+                            <p class="mark bg-primary-light mb-3">Cảm ơn. Việc đặt chỗ của bạn hiện đã được xác nhận.Vui lòng check email của bạn để kiểm tra thông tin đặt phòng</p>
+                        </div>
+                        <section class="mb-5">
+                            <h4>Thông tin khách hàng</h4>
+                            <div class="row">
+                                <div class="col-12 col-md-8">
+                                    <ul class="booking-card__checklist">
+                                        <li class="d-flex justify-content-between flex-wrap flex-column flex-sm-row mb-3">
+                                            <div class="fw-sm">Số điện thoại:</div><span>@Model.DienThoai</span>
+                                        </li>
+                                        <li class="d-flex justify-content-between flex-wrap flex-column flex-sm-row mb-3">
+                                            <div class="fw-sm">Họ tên:</div><span>@Model.HoTen</span>
+                                        </li>
+                                        <li class="d-flex justify-content-between flex-wrap flex-column flex-sm-row mb-3">
+                                            <div class="fw-sm">E-mail:</div><span>@Model.Email</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+                        <section class="mb-5">
+                            <h4>Special requirements</h4>
+                            <p>I would like a room overlooking the main square, if possible. To you I will be very grateful. Thank you.</p>
+                        </section>
+                        <section class="mb-5">
+                            <h4>Payment</h4>
+                            <p>You have now confirmed and guaranteed your booking by credit card.All payments are to be made at the hotel during your stay, unless otherwise stated in the hotel policies or in the room conditions.Please note that your credit card may be pre-authorised prior to your arrival.</p>
+                        </section>
+                        <div class="mb-5">
+                            <div class="fw-bold">This hotel accepts the following forms of payment:</div>
+                            <ul>
+                                <li>American Express, Visa, MasterCard</li>
+                            </ul>
+                        </div>
+                        <section>
+                            <h4>Cancel Reservation</h4>
+                            <p>
+                                You can cancel the reservation. To cancel the reservation, please
+                                <a href="#">click here.</a>
+                            </p>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

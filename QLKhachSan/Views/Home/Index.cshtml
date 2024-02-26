@@ -1,0 +1,36 @@
+﻿@using X.PagedList.Mvc.Core;
+@model X.PagedList.IPagedList<QLKhachSan.ViewModels.TinhThanhVM>
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "_LayoutHome";
+}
+
+<div class="row">
+    @foreach(var item in Model)
+    {
+        <div class="col-12 col-sm-6 col-lg-4 d-flex mb-4">
+            <div class="card card-hotel w-100 mb-2">
+                <div class="card-hotel__img">
+                    <img class="img-cover" src="@Url.Content($"~/img/Images/{item.Anh}")" alt="#" />
+                </div>
+                <div class="card-hotel__bottom">
+                    <h4 class="h4 mb-1">@item.TenTinh</h4>
+                    <div class="card-hotel__local d-flex align-items-center">
+                        <i class="icon icon-label text-secondary mr-1"></i>
+                        <ul class="d-inline-flex flex-wrap">
+                            <li class="mr-4">Việt Nam</li>
+                            <li class="amout">
+                                @item.SoLuongKhachSans
+                                Hotels
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-hover">
+                    <h3 class="h3 text-uppercase">@item.TenTinh</h3>
+                    <a class="btn btn-light btn--round card-hover__view" asp-action="KhachSanTheoTinh" asp-route-matinh="@item.MaTinh">VIEW</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
