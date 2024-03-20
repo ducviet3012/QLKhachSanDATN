@@ -19,6 +19,10 @@ namespace QLKhachSan.Controllers
         {
             db = context;
         }
+        public IActionResult DangKy()
+        {
+            return View();
+        }
         [HttpPost]
         public IActionResult DangKy(DangKyVM model)
         {
@@ -27,11 +31,13 @@ namespace QLKhachSan.Controllers
                 var email = db.KhachHangs.FirstOrDefault(x => x.Email == model.Email);
                 if (email != null)
                 {
-                    return Json(new { success = false, message = "Email đã tồn tại" });
+                    TempData["Message"] = "Email đã tồn tại";
+                    return View();
                 }
                 if (model.Password != model.ConfirmPassword)
                 {
-                    return Json(new { success = false, message = "Mật khẩu không trùng nhau" });
+                    TempData["Message"] = "Mật khẩu không trùng nhau";
+                    return View();
                 }
                 KhachHang kh = new KhachHang
                 {
@@ -48,8 +54,13 @@ namespace QLKhachSan.Controllers
                 };
                 db.Add(kh);
                 db.SaveChanges();
-                return Json(new { success = true, redirectUrl = "/Home" });
+                return RedirectToAction("Index","Home");
             }
+            return View();
+        }
+        public IActionResult DangNhap(string? ReturnUrl)
+        {
+            ViewBag.ReturnUrl = ReturnUrl;
             return View();
         }
         [HttpPost]
@@ -62,17 +73,20 @@ namespace QLKhachSan.Controllers
                 HttpContext.Session.SetString("email", model.email);
                 if (kh == null)
                 {
-                    return Json(new { success = false, message = "Tài khoản không tồn tại" });
+                    TempData["Message"] = "Tài khoản không tồn tại";
+                    return View();
                 }
                 if (kh.HieuLuc == 1)
                 {
-                    return Json(new { success = false, message = "Tài khoản đã bị khóa" });
+                    TempData["Message"] = "Tài khoản đã bị khóa";
+                    return View();
                 }
                 else
                 {
                     if (kh.Password != MD5Hash(model.password))
                     {
-                        return Json(new { success = false, message = "Mật khẩu không chính xác" });
+                        TempData["Message"] = "Mật khẩu không chính xác";
+                        return View();
                     }
                     else
                     {
@@ -88,19 +102,28 @@ namespace QLKhachSan.Controllers
                             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
                             await HttpContext.SignInAsync(claimsPrincipal);
-                            if (Url.IsLocalUrl(ReturnUrl))
-                            {
-                                return Redirect(ReturnUrl);
-                            }
-                            else
-                            {
-                                return Json(new { success = true, redirectUrl = "/Home" });
-                            }
+                            //if (Url.IsLocalUrl(ReturnUrl))
+                            //{
+                            //    return Redirect(ReturnUrl);
+                            //}
+                            //else
+                            //{
+                            //    return RedirectToAction("Index", "Home");
+                            //}
+                            return RedirectToAction("Index", "Home");
                         }
                     }
                 }
             }
             return View();
+        }
+        [HttpPost]
+        public IActionResult IsAuthenticated()
+        {
+            // Kiểm tra xem người dùng đã xác thực hay chưa
+            bool isAuthenticated = User.Identity.IsAuthenticated;
+
+            return Json(new { isAuthenticated });
         }
         public async Task<IActionResult> DangXuat()
         {

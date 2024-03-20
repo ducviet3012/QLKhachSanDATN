@@ -11,7 +11,7 @@ namespace QLKhachSan.Models
         }
 
         public string MaLp { get; set; } = null!;
-        public string? LoaiPhong1 { get; set; }
+        public string? TenLp { get; set; }
         public int? SoNguoiToiDa { get; set; }
         public double? Gia { get; set; }
         public string? Anh { get; set; }

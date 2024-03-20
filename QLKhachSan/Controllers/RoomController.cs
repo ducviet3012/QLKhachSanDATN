@@ -35,17 +35,16 @@ namespace QLKhachSan.Controllers
                             (dp.NgayDen >= model.ngayden && dp.NgayDen <= model.ngaydi) ||
                             (dp.NgayDi >= model.ngayden && dp.NgayDi <= model.ngaydi)
                                  select dp.MaPhong).Contains(p.MaPhong) && (model.songuoitoida == null || model.songuoitoida <= lp.SoNguoiToiDa) &&
-                                         (model.TenLoaiPhong == null || model.TenLoaiPhong == lp.LoaiPhong1) && (model.tenks == null || model.tenks == ks.TenKhachSan)
+                                         (model.TenLoaiPhong == null || model.TenLoaiPhong == lp.TenLp) && (model.tenks == null || model.tenks == ks.TenKhachSan)
                          select new SanPhamVM
                          {
                              MaLp = p.MaLp,
                              MaPhong = p.MaPhong,
                              TenPhong = p.TenPhong,
-                             TinhTrang = p.TinhTrang,
                              Anh = p.Anh,
                              Gia = lp.Gia,
                              SoNguoiToiDa = lp.SoNguoiToiDa,
-                             LoaiPhong = lp.LoaiPhong1,
+                             LoaiPhong = lp.TenLp,
                              TenTinh = t.TenTinh
                          };
             var sql = (from ks in db.KhachSans
@@ -57,7 +56,7 @@ namespace QLKhachSan.Controllers
                              join p in db.Phongs on lp.MaLp equals p.MaLp
                              join ks in db.KhachSans on p.MaKs equals ks.MaKs
                              where p.MaKs == sql
-                             select lp.LoaiPhong1).Distinct().ToList();
+                             select lp.TenLp).Distinct().ToList();
             var songuoitoida = db.LoaiPhongs
     .Select(lp => lp.SoNguoiToiDa)
     .Max();
@@ -66,6 +65,7 @@ namespace QLKhachSan.Controllers
             ViewBag.thietbi = thietbi;
             return View(result);
         }
+        [Authorize]
         public IActionResult Booking(int maphong, string tenphong , DateTime ngayden, DateTime ngaydi,int songuoitoida)
         {
             ViewBag.maphong = maphong;
@@ -87,13 +87,6 @@ namespace QLKhachSan.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (!User.Identity.IsAuthenticated)
-                {
-                    TempData["Message"] = "Vui lòng đăng nhập tài khoản trước khi đặt phòng";
-                    return Redirect("Booking");
-                }
-                else
-                {
                     var email = HttpContext.Session.GetString("email");
                     var customerID = (from kh in db.KhachHangs
                                       where kh.Email == email
@@ -200,7 +193,6 @@ namespace QLKhachSan.Controllers
                     //mailMessage.AlternateViews.Add(htmlView);
                     smtpClient.Send(mailMessage);
                     return View(model);
-                }
             }
             return Redirect("Booking");
         }

@@ -60,11 +60,11 @@
             </div>
         </div>
     </div>
-    <div class="modal-account modal" id="modalAccount" tabindex="-1" role="dialog">
+@*     <div class="modal-account modal" id="modalAccount" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-dialog-centered">
             @await Html.PartialAsync("_PartialLogin_SignUp")
         </div>
-    </div>
+    </div> *@
     <header class="page-header">
         <div class="panel-fixed">
             <div class="page-header__top bg-white js-header-top js-top-panel">
@@ -107,10 +107,10 @@
                                 else
                                 {
                                     <li class="nav-item d-flex">
-                                        <a class="nav-link btn btn-light js-toggle-account" href="#modalAccount" data-toggle="modal" role="button" data-account="login"><i class="text-gray icon icon-user mr-2"></i><span>log in</span></a>
+                                        <a class="nav-link btn btn-light " asp-controller="KhachHang" asp-action="DangNhap"><i class="text-gray icon icon-user mr-2"></i><span>log in</span></a>
                                     </li>
                                     <li class="nav-item d-flex">
-                                        <a class="nav-link btn btn-light js-toggle-account" href="#modalAccount" data-toggle="modal" role="button" data-account="regist"><i class="text-gray icon icon-login mr-2"></i><span>sign up</span></a>
+                                        <a class="nav-link btn btn-light " asp-controller="KhachHang" asp-action="DangKy"><i class="text-gray icon icon-login mr-2"></i><span>sign up</span></a>
                                     </li>
                                 }
                             </ul>
