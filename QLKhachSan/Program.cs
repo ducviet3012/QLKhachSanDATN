@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using QLKhachSan.Models;
+using QLKhachSan.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,9 +21,10 @@ builder.Services.AddSession(options =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
 {
     options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
-    options.LoginPath = "/Home";
+    options.LoginPath = "/KhachHang/DangNhap";
     options.AccessDeniedPath = "/AccessDenied";
 });
+builder.Services.AddSingleton<IVnPayService, VNPayService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -7,6 +7,7 @@ namespace QLKhachSan.Models
     {
         public KhachSan()
         {
+            LoaiPhongs = new HashSet<LoaiPhong>();
             Phongs = new HashSet<Phong>();
         }
 
@@ -19,6 +20,7 @@ namespace QLKhachSan.Models
         public int? DanhGia { get; set; }
 
         public virtual TinhThanh? MaTinhNavigation { get; set; }
+        public virtual ICollection<LoaiPhong> LoaiPhongs { get; set; }
         public virtual ICollection<Phong> Phongs { get; set; }
     }
 }

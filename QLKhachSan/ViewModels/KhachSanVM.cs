@@ -8,5 +8,6 @@
         public string? Anh {  get; set; }
         public string? DiaChi {  get; set; }
         public string? Mota {  get; set; }
+        public int? DanhGia { get; set; }
     }
 }

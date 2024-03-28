@@ -7,6 +7,7 @@
         public string? Email { get; set; }
         public string? Confirmemail { get; set; }
         public string? DienThoai { get; set; }
+        public int? maphong {  get; set; }
         public string? tenphong {  get; set; }
         public DateTime ngayden { get; set; }
         public DateTime ngaydi {  get; set; }

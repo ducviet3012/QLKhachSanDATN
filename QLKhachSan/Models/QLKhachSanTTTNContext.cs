@@ -140,15 +140,13 @@ namespace QLKhachSan.Models
             {
                 entity.ToTable("GopY");
 
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("ID");
-
-                entity.Property(e => e.Comment).HasMaxLength(50);
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.MaKh).HasColumnName("MaKH");
 
-                entity.Property(e => e.MaPhong).HasMaxLength(50);
+                entity.Property(e => e.MaKs).HasColumnName("MaKS");
+
+                entity.Property(e => e.NgayComment).HasColumnType("date");
 
                 entity.HasOne(d => d.MaKhNavigation)
                     .WithMany(p => p.Gopies)
@@ -177,6 +175,8 @@ namespace QLKhachSan.Models
                 entity.Property(e => e.TenKh)
                     .HasMaxLength(50)
                     .HasColumnName("TenKH");
+
+                entity.Property(e => e.TinhTrang).HasMaxLength(50);
 
                 entity.HasOne(d => d.MaKhNavigation)
                     .WithMany(p => p.HoaDons)
@@ -259,11 +259,18 @@ namespace QLKhachSan.Models
 
                 entity.Property(e => e.KichThuoc).HasMaxLength(20);
 
-                entity.Property(e => e.LoaiPhong1)
+                entity.Property(e => e.MaKs).HasColumnName("MaKS");
+
+                entity.Property(e => e.TenLp)
                     .HasMaxLength(50)
-                    .HasColumnName("LoaiPhong");
+                    .HasColumnName("TenLP");
 
                 entity.Property(e => e.ThongTin).HasMaxLength(100);
+
+                entity.HasOne(d => d.MaKsNavigation)
+                    .WithMany(p => p.LoaiPhongs)
+                    .HasForeignKey(d => d.MaKs)
+                    .HasConstraintName("FK_LoaiPhong_KhachSan");
             });
 
             modelBuilder.Entity<LoaiUser>(entity =>
@@ -327,11 +334,7 @@ namespace QLKhachSan.Models
                     .HasMaxLength(10)
                     .HasColumnName("MaLP");
 
-                entity.Property(e => e.Slvote).HasColumnName("SLVote");
-
                 entity.Property(e => e.TenPhong).HasMaxLength(50);
-
-                entity.Property(e => e.TinhTrang).HasMaxLength(50);
 
                 entity.HasOne(d => d.MaKsNavigation)
                     .WithMany(p => p.Phongs)
