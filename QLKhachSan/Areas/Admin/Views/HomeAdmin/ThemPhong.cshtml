@@ -18,11 +18,15 @@
             </div>
             <div class="mb-3">
                 <label asp-for="MaKS" class="form-label">Tên KS</label>
-                <select asp-for="MaKS" name="MaKS" class="default-select form-control wide mb-3" asp-items="ViewBag.MaKs"></select>
+                <select id="MaKS" asp-for="MaKS" name="MaKS" class="default-select form-control wide mb-3" asp-items="ViewBag.MaKs">
+                    <option value="">Chọn Tên KS</option>
+                </select>
             </div>
             <div class="mb-3">
                 <label asp-for="MaLP" class="form-label">Tên LP</label>
-                <select asp-for="MaLP" name="MaLP" class="default-select form-control wide mb-3" asp-items="ViewBag.MaLp"></select>
+                <select id="MaLP" asp-for="MaLP" name="MaLP" class="default-select form-control wide mb-3" asp-items="ViewBag.MaLp">
+                    <option value="">Chọn Tên LP</option>
+                </select>
             </div>
             <div class="mb-3">
                 <label for="formFileSm" class="form-label">Ảnh đại diện</label>
@@ -40,4 +44,24 @@
         </form>
     </div>
 </div>
-
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#MaKS').change(function () {
+            var selectedValue = $(this).val();
+            var url = '@Url.Action("ThemPhong", "HomeAdmin")' + '?maks=' + selectedValue;
+            console.log(selectedValue);
+            $.ajax({
+                url: '@Url.Action("ThemPhong", "HomeAdmin")',
+                type: 'GET',
+                data: { maks: selectedValue },
+                success: function (data) {
+                    window.location.href = url;
+                },
+                error: function () {
+                    alert('Đã xảy ra lỗi khi gửi yêu cầu.');
+                }
+            });
+        });
+    });
+</script>

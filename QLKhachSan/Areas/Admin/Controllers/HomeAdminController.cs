@@ -53,15 +53,20 @@ namespace QLKhachSan.Areas.Admin.Controllers
         }
 		[Route("themphong")]
 		[HttpGet]
-		public IActionResult ThemPhong()
-		{
+		public IActionResult ThemPhong(int? maks)
+        {
             var lastMaPhong = db.Phongs.OrderByDescending(p => p.MaPhong).FirstOrDefault()?.MaPhong ?? 0;
             var nextMaPhong = lastMaPhong + 1;
-
-            // Trả về mã phòng mới cho giao diện
             ViewBag.NextMaPhong = nextMaPhong;
             ViewBag.MaKs = new SelectList(db.KhachSans.ToList(), "MaKs", "TenKhachSan");
-            ViewBag.MaLp = new SelectList(db.LoaiPhongs.ToList(), "MaLp", "TenLp");
+            var loaiPhongs = from lp in db.LoaiPhongs
+                             where lp.MaKs == maks 
+                             select new
+                             {
+                                 lp.MaLp,
+                                 lp.TenLp
+                             };
+            ViewBag.MaLp = new SelectList(loaiPhongs.ToList(), "MaLp", "TenLp");
             return View();
 		}
         [Route("themphong")]
@@ -156,49 +161,64 @@ namespace QLKhachSan.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult SuaPhong(PhongVM model, IFormFile Anh , List<IFormFile> AnhDetail)
         {
-            var filename = Path.GetFileName(Anh.FileName);
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "Images", filename);
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                Anh.CopyTo(stream);
-            }
-            var updatePhong = new Phong
-            {
-                TenPhong = model.TenPhong,
-                MaKs = model.MaKS,
-                MaLp = model.MaLP,
-                Anh = filename,
-                MoTa = model.MoTa
-            };
-            db.Update(updatePhong);
-            db.SaveChanges();
-            //foreach (var file in AnhDetail)
-            //{
-            //    if (file != null && file.Length > 0)
-            //    {
-            //        var fileName1 = Path.GetFileName(file.FileName);
-            //        var filePath1 = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "Images", fileName1);
+			var phongToUpdate = db.Phongs.FirstOrDefault(p => p.MaPhong == model.MaPhong);
+            bool isUpdateAnh = false;
+			if (phongToUpdate != null)
+			{
+				if (Anh != null && Anh.Length > 0)
+				{
+					var filename = Path.GetFileName(Anh.FileName);
+					var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "Images", filename);
+					using (var stream = new FileStream(filePath, FileMode.Create))
+					{
+						Anh.CopyTo(stream);
+					}
+					phongToUpdate.Anh = filename;
+				}
+				phongToUpdate.TenPhong = model.TenPhong;
+				phongToUpdate.MaKs = model.MaKS;
+				phongToUpdate.MaLp = model.MaLP;
+				phongToUpdate.MoTa = model.MoTa;
 
-            //        using (var stream = new FileStream(filePath1, FileMode.Create))
-            //        {
-            //            file.CopyTo(stream);
-            //        }
-            //        var maphong = (from p in db.Phongs
-            //                       where p.TenPhong == model.TenPhong
-            //                       select p.MaPhong).FirstOrDefault();
-            //        // Lưu thông tin về ảnh chi tiết vào cơ sở dữ liệu
-            //        var anhChiTiet = new Ctanh
-            //        {
-            //            MaPhong = maphong, // Thay bằng ID của phòng chính
-            //            TenAnh = fileName1
-            //        };
+				db.Update(phongToUpdate);
+				db.SaveChanges();
+				var oldCtanhs = db.Ctanhs.Where(x => x.MaPhong == model.MaPhong).ToList();
+				foreach (var oldCtanh in oldCtanhs)
+				{
+					db.Remove(oldCtanh);
+				}
+				foreach (var file in AnhDetail)
+				{
+					if (file != null && file.Length > 0)
+					{
+						var fileName1 = Path.GetFileName(file.FileName);
+						var filePath1 = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "Images", fileName1);
 
-            //        // Lưu thông tin vào cơ sở dữ liệu
-            //        db.Update(anhChiTiet);
-            //        db.SaveChanges();
-            //    }
-            //}
-            return RedirectToAction("Phong");
+						using (var stream = new FileStream(filePath1, FileMode.Create))
+						{
+							file.CopyTo(stream);
+						}
+
+						// Tạo một chi tiết ảnh mới
+						var newCtanh = new Ctanh
+						{
+							MaPhong = model.MaPhong,
+							TenAnh = fileName1
+						};
+
+						// Thêm chi tiết ảnh mới vào cơ sở dữ liệu
+						db.Add(newCtanh);
+						db.SaveChanges();
+					}
+				}
+				TempData["Message"] = "Cập nhật phòng thành công.";
+				return RedirectToAction("Phong");
+			}
+			else
+			{
+				TempData["ErrorMessage"] = "Không tìm thấy phòng để cập nhật.";
+				return RedirectToAction("SuaPhong");
+			}
         }
         [Route("xoaphong")]
         [HttpGet]

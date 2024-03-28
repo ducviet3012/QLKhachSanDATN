@@ -102,15 +102,15 @@ namespace QLKhachSan.Controllers
                             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
                             await HttpContext.SignInAsync(claimsPrincipal);
-                            //if (Url.IsLocalUrl(ReturnUrl))
-                            //{
-                            //    return Redirect(ReturnUrl);
-                            //}
-                            //else
-                            //{
-                            //    return RedirectToAction("Index", "Home");
-                            //}
-                            return RedirectToAction("Index", "Home");
+                            if (Url.IsLocalUrl(ReturnUrl))
+                            {
+                                return Redirect(ReturnUrl);
+                            }
+                            else
+                            {
+                                return RedirectToAction("Index", "Home");
+                            }
+                            //return RedirectToAction("Index", "Home");
                         }
                     }
                 }

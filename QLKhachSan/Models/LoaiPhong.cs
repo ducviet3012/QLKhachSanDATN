@@ -11,6 +11,7 @@ namespace QLKhachSan.Models
         }
 
         public string MaLp { get; set; } = null!;
+        public int? MaKs { get; set; }
         public string? TenLp { get; set; }
         public int? SoNguoiToiDa { get; set; }
         public double? Gia { get; set; }
@@ -18,6 +19,7 @@ namespace QLKhachSan.Models
         public string? ThongTin { get; set; }
         public string? KichThuoc { get; set; }
 
+        public virtual KhachSan? MaKsNavigation { get; set; }
         public virtual ICollection<Phong> Phongs { get; set; }
     }
 }

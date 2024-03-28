@@ -80,6 +80,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9vbVxDb25maXJtQm9va2luZy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/DATN/QLKhachSan/QLKhachSan/Views/Room/PaymentFail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9vbVxQYXltZW50RmFpbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/DATN/QLKhachSan/QLKhachSan/Views/Room/Success.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9vbVxTdWNjZXNzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/DATN/QLKhachSan/QLKhachSan/Views/Shared/Components/KhachSan/Default.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcS2hhY2hTYW5cRGVmYXVsdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

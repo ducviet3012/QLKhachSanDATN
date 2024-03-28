@@ -18,6 +18,7 @@ namespace QLKhachSan.Models
         public string? TenKh { get; set; }
         public string? Email { get; set; }
         public string? Sdt { get; set; }
+        public string? TinhTrang { get; set; }
 
         public virtual KhachHang? MaKhNavigation { get; set; }
         public virtual NhanVien? MaNvNavigation { get; set; }

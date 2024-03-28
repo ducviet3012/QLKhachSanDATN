@@ -5,6 +5,9 @@ using QLKhachSan.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using System.Net.Mail;
 using System.Net;
+using QLKhachSan.Services;
+using Newtonsoft.Json;
+using System.Globalization;
 
 namespace QLKhachSan.Controllers
 {
@@ -12,11 +15,14 @@ namespace QLKhachSan.Controllers
     {
         private readonly ILogger<RoomController> _logger;
         private readonly QLKhachSanTTTNContext db;
-        public RoomController(ILogger<RoomController> logger, QLKhachSanTTTNContext context)
+        private readonly IVnPayService _vnPayService;
+        public RoomController(ILogger<RoomController> logger, QLKhachSanTTTNContext context, IVnPayService vnPayService)
         {
             _logger = logger;
             db = context;
+            _vnPayService = vnPayService;
         }
+        public List<BookingVM> Cart => HttpContext.Session.Get<List<BookingVM>>("Cart") ?? new List<BookingVM>();
         public IActionResult Index()
         {
             return View();
@@ -66,135 +72,193 @@ namespace QLKhachSan.Controllers
             return View(result);
         }
         [Authorize]
-        public IActionResult Booking(int maphong, string tenphong , DateTime ngayden, DateTime ngaydi,int songuoitoida)
+        public IActionResult Booking(BookingVM model)
         {
-            ViewBag.maphong = maphong;
-            ViewBag.tenphong = tenphong;
-            ViewBag.ngayden = ngayden;
-            ViewBag.ngaydi = ngaydi;
-            ViewBag.songuoitoida = songuoitoida;
             var gia = (from lp in db.LoaiPhongs
                        join p in db.Phongs on lp.MaLp equals p.MaLp
-                       where p.MaPhong == maphong
+                       where p.MaPhong == model.maphong
                        select lp.Gia).FirstOrDefault();
-            TimeSpan soNgay = ngaydi - ngayden;
+            TimeSpan soNgay = model.ngaydi - model.ngayden;
             int soNgayTrongKhoang = (soNgay.Days + 1);
-            ViewBag.thanhtien = gia * soNgayTrongKhoang;
-            return View();
+            model.thanhtien = (double)gia * soNgayTrongKhoang;
+            model.tenphong = HttpContext.Session.GetString("tenphong");
+            return View(model);
+        }
+        public void SaveBookingInfoToDatabase(int customerID, BookingVM model, int roomID, string payment)
+        {
+            var khachhang = db.KhachHangs.SingleOrDefault(kh => kh.MaKh == customerID);
+
+            var hoadon = new HoaDon
+            {
+                MaKh = customerID,
+                NgayThanhToan = model.ngaydi,
+                TenKh = model.GiongKhachHang ? khachhang.TenKh : model.HoTen,
+                Email = model.GiongKhachHang ? khachhang.Email : model.Email,
+                Sdt = model.GiongKhachHang ? khachhang.Sdt : model.DienThoai,
+                TinhTrang = payment == "Thanh toán VNPay" ? "Đã thanh toán" : "Chưa thanh toán"
+            };
+            db.Add(hoadon);
+            db.SaveChanges();
+            var datphong = new DatPhong
+            {
+                SoHoaDon = hoadon.SoHoaDon,
+                MaPhong = roomID,
+                NgayDen = model.ngayden,
+                NgayDi = model.ngaydi,
+                SoNguoi = model.songuoitoida
+            };
+            db.Add(datphong);
+            db.SaveChanges();
+        }
+        public void SendMail()
+        {
+
         }
         [HttpPost]
-        public IActionResult ConfirmBooking(int maphong, BookingVM model)
+        public IActionResult ConfirmBooking(int maphong, BookingVM model, string payment = "COD")
         {
             if (ModelState.IsValid)
             {
-                    var email = HttpContext.Session.GetString("email");
-                    var customerID = (from kh in db.KhachHangs
-                                      where kh.Email == email
-                                      select kh.MaKh).FirstOrDefault();
-                    var khachhang = new KhachHang();
-                    string ht;
-                    string emailKH;
-                    string dienthoai;
-                    string adressEmail;
-                    if (model.GiongKhachHang)
+                var email = HttpContext.Session.GetString("email");
+                var customerID = (from kh in db.KhachHangs
+                                  where kh.Email == email
+                                  select kh.MaKh).FirstOrDefault();
+                var khachhang = new KhachHang();
+                string ht;
+                string emailKH;
+                string dienthoai;
+                string adressEmail;
+                HttpContext.Session.SetString("CustomerID", customerID.ToString());
+                HttpContext.Session.SetString("RoomID", maphong.ToString());
+                HttpContext.Session.SetString("PaymentMethod", payment);
+                HttpContext.Session.SetString("BookingModel", JsonConvert.SerializeObject(model));
+                if (model.GiongKhachHang)
+                {
+                    khachhang = db.KhachHangs.SingleOrDefault(p => p.MaKh == customerID);
+                    model.HoTen = khachhang.TenKh;
+                    model.DienThoai = khachhang.Sdt;
+                    model.Email = email;
+                    ht = khachhang.TenKh;
+                    emailKH = khachhang.Email;
+                    dienthoai = khachhang.Sdt;
+                    adressEmail = khachhang.Email;
+                }
+                else
+                {
+                    ht = model.HoTen;
+                    emailKH = model.Email;
+                    dienthoai = model.DienThoai;
+                    adressEmail = model.Email;
+                }
+                if (payment == "Thanh toán VNPay")
+                {
+                    var vnPayModel = new VnPaymentRequestModel
                     {
-                        khachhang = db.KhachHangs.SingleOrDefault(p => p.MaKh == customerID);
-                        model.HoTen = khachhang.TenKh;
-                        model.DienThoai = khachhang.Sdt;
-                        model.Email = email;
-                        ht = khachhang.TenKh;
-                        emailKH = khachhang.Email;
-                        dienthoai = khachhang.Sdt;
-                        adressEmail = khachhang.Email;
-                    }
-                    else
-                    {
-                        ht = model.HoTen;
-                        emailKH = model.Email;
-                        dienthoai = model.DienThoai;
-                        adressEmail = model.Email;
-                    }
-                    var hoadon = new HoaDon
-                    {
-                        MaKh = customerID,
-                        NgayThanhToan = model.ngaydi,
-                        TenKh = model.HoTen ?? khachhang.TenKh,
-                        Email = model.Email ?? khachhang.Email,
-                        Sdt = model.DienThoai ?? khachhang.Sdt
+                        Amount = model.thanhtien,
+                        CreateDate = DateTime.Now,
+                        Desscription = $"{model.HoTen}{model.DienThoai}",
+                        FullName = model.HoTen,
+                        OrderId = new Random().Next(1000, 10000)
                     };
-                    db.Add(hoadon);
-                    db.SaveChanges();
-                    var datphong = new DatPhong
-                    {
-                        SoHoaDon = hoadon.SoHoaDon,
-                        MaPhong = maphong,
-                        NgayDen = model.ngayden,
-                        NgayDi = model.ngaydi,
-                        SoNguoi = model.songuoitoida
-                    };
-                    var tenks = (from ks in db.KhachSans
-                                 join p in db.Phongs on ks.MaKs equals p.MaKs
-                                 where p.MaPhong == maphong
-                                 select ks.TenKhachSan).FirstOrDefault();
-                    var diachi = (from ks in db.KhachSans
-                                 join p in db.Phongs on ks.MaKs equals p.MaKs
-                                 where p.MaPhong == maphong
-                                 select ks.DiaChi).FirstOrDefault();
-                    db.Add(datphong);
-                    db.SaveChanges();
-                    var smtpClient = new SmtpClient("smtp.gmail.com")
-                    {
-                        Port = 587,
-                        Credentials = new NetworkCredential("doducviet3012@gmail.com", "ebfwregutahnwhrj"),
-                        EnableSsl = true,
+                    return Redirect(_vnPayService.CreatePaymentUrl(HttpContext, vnPayModel));
+                }
+                SaveBookingInfoToDatabase(customerID, model, maphong, payment);
+                var tenks = (from ks in db.KhachSans
+                             join p in db.Phongs on ks.MaKs equals p.MaKs
+                             where p.MaPhong == maphong
+                             select ks.TenKhachSan).FirstOrDefault();
+                var diachi = (from ks in db.KhachSans
+                              join p in db.Phongs on ks.MaKs equals p.MaKs
+                              where p.MaPhong == maphong
+                              select ks.DiaChi).FirstOrDefault();
+                var smtpClient = new SmtpClient("smtp.gmail.com")
+                {
+                    Port = 587,
+                    Credentials = new NetworkCredential("doducviet3012@gmail.com", "ebfwregutahnwhrj"),
+                    EnableSsl = true,
 
-                    };
+                };
 
-                    double tongtien = 0;
-                    var strSanPham = "<table border='1'>";
-                    strSanPham += "<thead><tr><th>Tên khách sạn</th><th>Tên phòng</th><th>Ngày đến</th><th>Ngày đi</th><th>Số người</th><th>Địa chỉ</th><th>Tổng tiền</th></tr></thead>";
-                    strSanPham += "<tbody>";
-                        strSanPham += "<tr>";
-                        strSanPham += $"<td>{tenks}</td>";
-                        strSanPham += $"<td>{model.tenphong}</td>";
-                        strSanPham += $"<td>{model.ngayden}</td>";
-                        strSanPham += $"<td>{model.ngaydi}</td>";
-                        strSanPham += $"<td>{model.songuoitoida}</td>";
-                        strSanPham += $"<td>{diachi}</td>";
-                    strSanPham += $"<td>{model.thanhtien}</td>";
-                    strSanPham += "</tr>";
-                    strSanPham += "</tbody></table>";
-                    var strThongTinKhachHang = $@"
+                double tongtien = 0;
+                var strSanPham = "<table border='1'>";
+                strSanPham += "<thead><tr><th>Tên khách sạn</th><th>Tên phòng</th><th>Ngày đến</th><th>Ngày đi</th><th>Số người</th><th>Địa chỉ</th><th>Tổng tiền</th></tr></thead>";
+                strSanPham += "<tbody>";
+                strSanPham += "<tr>";
+                strSanPham += $"<td>{tenks}</td>";
+                strSanPham += $"<td>{model.tenphong}</td>";
+                strSanPham += $"<td>{model.ngayden}</td>";
+                strSanPham += $"<td>{model.ngaydi}</td>";
+                strSanPham += $"<td>{model.songuoitoida}</td>";
+                strSanPham += $"<td>{diachi}</td>";
+                strSanPham += $"<td>{model.thanhtien}</td>";
+                strSanPham += "</tr>";
+                strSanPham += "</tbody></table>";
+                var strThongTinKhachHang = $@"
                         <p>Họ tên khách hàng: {ht}</p>
                         <p>Email: {emailKH}</p>
                         <p>Số điện thoại: {dienthoai}</p>
                         ";
-                    var fullContent = $@"
+                var fullContent = $@"
                          <h2>Thông tin đặt phòng</h2>
                               {strSanPham}
                          <h2>Thông tin khách hàng</h2>
                               {strThongTinKhachHang}
                          ";
-                    var fromAddress = new MailAddress("doducviet3012@gmail.com", "Hotel");
+                var fromAddress = new MailAddress("doducviet3012@gmail.com", "Hotel");
 
-                    // Tạo địa chỉ email người nhận
-                    var toAddress = new MailAddress(adressEmail);
+                // Tạo địa chỉ email người nhận
+                var toAddress = new MailAddress(adressEmail);
 
-                    // Tạo đối tượng MailMessage
-                    var mailMessage = new MailMessage(fromAddress, toAddress)
-                    {
-                        Subject = "Phòng bạn được đặt thành công",
-                        Body = fullContent,
-                        IsBodyHtml = true // Đặt true nếu bạn sử dụng HTML trong nội dung email
-                    };
+                // Tạo đối tượng MailMessage
+                var mailMessage = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = "Phòng bạn được đặt thành công",
+                    Body = fullContent,
+                    IsBodyHtml = true // Đặt true nếu bạn sử dụng HTML trong nội dung email
+                };
 
-                    // Gửi email
-                    //var htmlView = AlternateView.CreateAlternateViewFromString(strSanPham, new ContentType("text/html"));
-                    //mailMessage.AlternateViews.Add(htmlView);
-                    smtpClient.Send(mailMessage);
-                    return View(model);
+                // Gửi email
+                smtpClient.Send(mailMessage);
+                return View(model);
             }
-            return Redirect("Booking");
+
+            return Redirect("Success");
+        }
+
+        [Authorize]
+        public IActionResult PaymentFail()
+        {
+            return View();
+        }
+        public IActionResult Success()
+        {
+            return View();
+        }
+
+        [Authorize]
+        public IActionResult PaymentCallBack()
+        {
+            var response = _vnPayService.PaymentExecute(Request.Query);
+            if (response == null || response.VnPayResponseCode != "00")
+            {
+                TempData["Message"] = $"Lỗi thanh toán VNPay:{response.VnPayResponseCode}";
+                return RedirectToAction("Booking");
+            }
+            var customerID = int.Parse(HttpContext.Session.GetString("CustomerID"));
+            var roomID = int.Parse(HttpContext.Session.GetString("RoomID"));
+            var paymentMethod = HttpContext.Session.GetString("PaymentMethod");
+            var bookingModel = JsonConvert.DeserializeObject<BookingVM>(HttpContext.Session.GetString("BookingModel"));
+            var email = HttpContext.Session.GetString("email");
+            if (bookingModel.GiongKhachHang)
+            {
+                var khachhang = db.KhachHangs.SingleOrDefault(p => p.MaKh == customerID);
+                bookingModel.HoTen = khachhang.TenKh;
+                bookingModel.DienThoai = khachhang.Sdt;
+                bookingModel.Email = email;
+            }
+            SaveBookingInfoToDatabase(customerID, bookingModel, roomID, paymentMethod);
+            TempData["Message"] = $"Thanh toán VNP thành công";
+            return View("ConfirmBooking",bookingModel);
         }
     }
 }

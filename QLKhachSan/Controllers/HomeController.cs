@@ -137,7 +137,7 @@ namespace QLKhachSan.Controllers
             ViewBag.thietbi = thietbi;
             return View(viewModel);
         }
-        public IActionResult ChiTietPhong(DateTime ngayden, DateTime ngaydi, int id)
+        public IActionResult ChiTietPhong(int id)
         {
             var result = (from Phong in db.Phongs
 						  join dp in db.DatPhongs on Phong.MaPhong equals dp.MaPhong into phongDatPhong
@@ -156,6 +156,7 @@ namespace QLKhachSan.Controllers
                               ngayden = dp.NgayDen,
                               ngaydi = dp.NgayDi
                           }).FirstOrDefault();
+            HttpContext.Session.SetString("tenphong", result.TenPhong);
             var anhphong = db.Ctanhs.Where(x => x.MaPhong == id).ToList();
             ViewBag.anhphong = anhphong;
             var songuoitoida = db.LoaiPhongs
