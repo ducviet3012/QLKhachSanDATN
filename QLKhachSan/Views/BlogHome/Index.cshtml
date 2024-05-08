@@ -1,0 +1,55 @@
+﻿@model IEnumerable<QLKhachSan.ViewModels.BlogVM>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "_LayoutBlog";
+}
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="blog-list-item col-12">
+            <a class="blog-post-wrap" asp-controller="BlogHome" asp-action="BlogDetail" asp-route-id="@item.IDBlog">
+                <article class="blog-post card">
+                    <div class="blog-post__head mb-3">
+                        <h2 class="blog-post__title mb-3">
+                            @item.TieuDe
+                        </h2>
+                        <ul class="blog-post__meta">
+                            <li class="date">
+                                <i class="icon icon-calendar"></i>
+                                <time datetime="2017-01-18">18.01.2017</time>
+                            </li>
+                            <li class="status"><i class="icon icon-user"></i><span>@item.TenNV</span></li>
+                            <li>
+                                <i class="icon icon-tags"></i>
+                                <ol class="blog-post__meta-tags">
+                                    <li>
+                                        <span>France</span>
+                                    </li>
+                                    <li>
+                                        <span>Nice</span>
+                                    </li>
+                                    <li>
+                                        <span>beach holidays</span>
+                                    </li>
+                                </ol>
+                            </li>
+                            <li>
+                                <i class="icon icon-comments"></i><span>5</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <figure class="blog-post__cover mb-3 border-bottom"><span class="d-block img-wrap"><img class="img-cover" src="@Url.Content("~/img/Images/"+@item.Anh)" alt="Features holiday on the French Riviera" /></span></figure>
+                    <p>@item.ThongTin</p>
+                    <div class="blog-post__more">
+                        <a asp-controller="BlogHome" asp-action="BlogDetail" asp-route-id="@item.IDBlog">
+                            <span class="mr-2">Read more</span>
+                            <i class="icon icon-arrow-right"></i>
+                        </a>
+                    </div>
+
+                </article>
+            </a>
+        </div>
+    }
+</div>

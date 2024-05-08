@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@inject IHttpContextAccessor HttpContextAccessor
+<!DOCTYPE html>
 <html class="no-js" lang="en">
 
 <!-- Mirrored from netgon.ru/themeforest/yourtravelworld_html/contacts.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 26 Jan 2024 14:56:34 GMT -->
@@ -36,7 +37,63 @@
     <link rel="stylesheet" href="~/css/blueimp-gallery.min.css">
     <link rel="stylesheet" href="~/style.min.css">
     <link id="cssTheme" rel="stylesheet" href="~/skins/style-default.css">
+    <link rel="stylesheet" href="~/css/profile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        h4 {
+            color: black;
+            margin-bottom: 50px;
+        }
+
+        .personal__account-security .item {
+            border-bottom: 1px solid #ccc; /* Chọn màu và kích thước border phù hợp */
+            padding-bottom: 10px; /* Điều chỉnh khoảng cách giữa border và nội dung */
+        }
+
+        .col-lg-9, .col-md-9, .col-sm-9, .name {
+            color: #fff;
+        }
+
+        .item .button-change {
+            float: right;
+        }
+
+        /* Điều chỉnh khoảng cách giữa các mục */
+        .item {
+            margin-bottom: 20px;
+        }
+
+        .nav-item .nav-link {
+            color: gray;
+        }
+
+        /* Thay đổi màu chữ của nút "Đăng xuất tài khoản" */
+        .nav-link, .label {
+            color: gray;
+        }
+
+        .nav-item .nav-link:hover {
+            color: black;
+        }
+
+        .label .info {
+            color: black;
+            margin-left: 50px;
+        }
+
+
+        /* Thay đổi màu chữ khi hover trên nút "Đăng xuất tài khoản" */
+        .nav-link:hover {
+            color: #000; /* Màu chữ khi hover */
+            background-color: #f2f2f2; /* Màu nền khi hover */
+        }
+
+        /* Màu chữ khi đã chọn trên thanh điều hướng */
+        .nav-link.active {
+            color: #000;
+        }
+
+    </style>
 </head>
 <body class="load">
     <div class="progress-load js-progress-load"></div>
@@ -98,22 +155,11 @@
                         </div>
                         <div class="col col-lg-3 d-none d-md-flex">
                             <ul class="nav nav-panel">
-                                @if (User.Identity != null && User.Identity.IsAuthenticated)
-                                {
-                                    <a asp-action="ProFile" asp-controller="KhachHang" class="my-auto">
+                                    <a asp-action="ProFile" asp-controller="KhachHang" class="my-auto user-profile">
                                         <span>@User.Identity.Name</span>
                                         <i class="fa fa-user" style="font-size:36px"></i>
                                     </a>
-                                }
-                                else
-                                {
-                                    <li class="nav-item d-flex">
-                                        <a class="nav-link btn btn-light " asp-controller="KhachHang" asp-action="DangNhap"><i class="text-gray icon icon-user mr-2"></i><span>log in</span></a>
-                                    </li>
-                                    <li class="nav-item d-flex">
-                                        <a class="nav-link btn btn-light " asp-controller="KhachHang" asp-action="DangKy"><i class="text-gray icon icon-login mr-2"></i><span>sign up</span></a>
-                                    </li>
-                                }
+
                             </ul>
                         </div>
                     </div>
@@ -136,13 +182,13 @@
                             </form>
                         </div>
                         <ul class="nav nav-panel">
-                            @if (User.Identity != null && User.Identity.IsAuthenticated)
-                            {
+@*                             @if (User.Identity != null && User.Identity.IsAuthenticated)
+                            { *@
                                 <a asp-action="ProFile" asp-controller="KhachHang" class="my-auto">
                                     <span>@User.Identity.Name</span>
                                     <i class="fa fa-user" style="font-size:36px"></i>
                                 </a>
-                            }
+@*                             }
                             else
                             {
                                 <li class="nav-item d-flex">
@@ -151,7 +197,7 @@
                                 <li class="nav-item d-flex">
                                     <a class="nav-link btn btn-light js-toggle-account" href="#modalAccount" data-toggle="modal" role="button" data-account="regist"><i class="text-gray icon icon-login mr-2"></i><span>sign up</span></a>
                                 </li>
-                            }
+                            } *@
                         </ul>
                     </div>
                     <ul class="main-nav__list nav d-flex" id="navMenu">
@@ -187,7 +233,61 @@
         <div class="page-content">
             <div class="container">
                 <div class="row">
-                    @RenderBody()
+                    <div class="container-fluid">
+                        <div class="row" style="min-height: 500px;">
+                            <!-- Phần bên trái (20%) -->
+                            <div class="col-lg-3 col-md-3 col-sm-3">
+                                <div class="p-3">
+                                    <h4>Thông tin người dùng</h4>
+                                    <div style="border:1px solid; margin-bottom: 20px;"></div>
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item">
+                                            <a asp-action="ProFile" id="ThongTinCaNhan" class="nav-link active">Thông tin cá nhân</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a id="lsdp" class="nav-link">Lịch sử đặt phòng</a>
+                                        </li>
+                                        @{
+                                            var id = HttpContextAccessor.HttpContext.Session.GetString("idKH");
+                                        }
+                                        @if (id == "4")
+                                        {
+                                            <li class="nav-item">
+                                                <a asp-controller="DoanhNghiep" asp-action="DoanhThuKS"  class="nav-link">Doanh thu</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a asp-controller="DoanhNghiep" asp-action="HoaDonKS" class="nav-link">Hóa đơn</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a id="themks" class="nav-link">Thêm khách sạn</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a asp-controller="DoanhNghiep" asp-action="ThemPhong" class="nav-link">Thêm phòng</a>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            
+                                        }
+                                        <li class="nav-item">
+                                            <a id="DoiMK" class="nav-link">Đổi mật khẩu</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-action="DangXuat" asp-controller="KhachHang" onclick="clearLocalStorage()" class="nav-link">Đăng xuất tài khoản</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                                <!-- Phần bên phải (80%) -->
+                                <div id="container" class="col-lg-9 col-md-9 col-sm-9">
+                                    @RenderBody()
+                                </div>
+
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <button class="btn btn-primary btn-nav btn-nav--up js-scroll-up" type="button"><i class="fa fa-angle-up"></i></button>
@@ -291,6 +391,63 @@
     <script src="~/js/script.min.js"></script>
     <script src="~/js/demo-switcher.js"></script>
 </body>
-
+@RenderSection("scripts", required: false)
 <!-- Mirrored from netgon.ru/themeforest/yourtravelworld_html/contacts.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 26 Jan 2024 14:56:34 GMT -->
 </html>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#DoiMK").click(function () {
+            DoiMatKhau();
+        });
+        $("#lsdp").click(function () {
+            LsDatPhong();
+        });
+        $("#themks").click(function () {
+            ThemKS();
+        });
+    });
+
+    function DoiMatKhau() {
+        $.ajax({
+            type: "GET",
+            url: "/KhachHang/DoiMK",
+            success: function (result) {
+                $('#container').html(result);
+            },
+            error: function (error) {
+                console.error("Error:", error);
+            }
+        });
+    }
+    function LsDatPhong() {
+        $.ajax({
+            type: "GET",
+            url: "/KhachHang/LichSuDatPhong",
+            success: function (result) {
+                $('#container').html(result);
+            },
+            error: function (error) {
+                console.error("Error:", error);
+            }
+        });
+    }
+    function ThemKS() {
+        $.ajax({
+            type: "GET",
+            url: "/DoanhNghiep/ThemKS",
+            success: function (result) {
+                $('#container').html(result);
+            },
+            error: function (error) {
+                console.error("Error:", error);
+            }
+        });
+    }
+</script>
+<script>
+    function clearLocalStorage() {
+        localStorage.clear();
+    }
+</script>

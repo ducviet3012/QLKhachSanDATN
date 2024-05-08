@@ -14,7 +14,7 @@ namespace QLKhachSan.Models
         public int MaPhong { get; set; }
         public int? MaKs { get; set; }
         public string? TenPhong { get; set; }
-        public string? MaLp { get; set; }
+        public int? MaLp { get; set; }
         public string? Anh { get; set; }
         public string? MoTa { get; set; }
 

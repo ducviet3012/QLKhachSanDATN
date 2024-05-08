@@ -13,7 +13,7 @@
                         <div class="row">
                             <div class="col-12 col-sm-6 col-lg-12 form-group">
                                 <input type="hidden" name="maphong" value="@Model.MaPhong" />
-                                <input type="hidden" name="tenphong" value="@Model.TenPhong" />
+@*                                 <input type="hidden" name="tenphong" value="@Model.TenPhong" /> *@
                                 <label class="label-text">Check in date</label>
                                 <div class="input-group date">
                                     <input class="form-control js-input-date" id="hotelInDate" type="date" name="ngayden" required="required" />
@@ -39,7 +39,8 @@
                         <div class="row">
                             <div class="col-12 col-sm-6 form-group col-lg-12">
                                 <span class="form-select">
-                                    <select class="form-control select2 js-form-select" id="hotelAdults" name="songuoitoida">
+                                    <select id="songuoitoidaSelect" name="songuoitoida" class="form-control select2 js-form-select">
+                                        <option value="">Chọn số người</option>
                                         @for (var i = 1; i <= ViewBag.songuoitoida; i++)
                                         {
                                             <option value="@i">@i Guest</option>
@@ -1298,8 +1299,9 @@
     function submitForm() {
         var ngayden = document.getElementById("hotelInDate").value;
         var ngaydi = document.getElementById("hotelOutDate").value;
+        var songuoitoida = document.getElementById("songuoitoidaSelect").value
 
-        document.getElementById("bookingForm").action = "/Room/Booking?maphong=@Model.MaPhong&ngayden=" + ngayden + "&ngaydi=" + ngaydi;
+        document.getElementById("bookingForm").action = "/Room/Booking?maphong=@Model.MaPhong&ngayden=" + ngayden + "&ngaydi=" + ngaydi+"&songuoitoida="+songuoitoida;
         document.getElementById("bookingForm").submit();
     }
 </script>

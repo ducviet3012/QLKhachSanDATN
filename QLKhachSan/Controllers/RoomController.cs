@@ -110,9 +110,58 @@ namespace QLKhachSan.Controllers
             db.Add(datphong);
             db.SaveChanges();
         }
-        public void SendMail()
+        private void SendConfirmationEmail(BookingVM bookingModel, string customerEmail)
         {
+            // Tạo nội dung email
+            var tenks = (from ks in db.KhachSans
+                         join p in db.Phongs on ks.MaKs equals p.MaKs
+                         where p.MaPhong == bookingModel.maphong
+                         select ks.TenKhachSan).FirstOrDefault();
+            var diachi = (from ks in db.KhachSans
+                          join p in db.Phongs on ks.MaKs equals p.MaKs
+                          where p.MaPhong == bookingModel.maphong
+                          select ks.DiaChi).FirstOrDefault();
+            var strSanPham = "<table border='1'>";
+            strSanPham += "<thead><tr><th>Tên khách sạn</th><th>Tên phòng</th><th>Ngày đến</th><th>Ngày đi</th><th>Số người</th><th>Địa chỉ</th><th>Tổng tiền</th></tr></thead>";
+            strSanPham += "<tbody>";
+            strSanPham += "<tr>";
+            strSanPham += $"<td>{tenks}</td>";
+            strSanPham += $"<td>{bookingModel.tenphong}</td>";
+            strSanPham += $"<td>{bookingModel.ngayden}</td>";
+            strSanPham += $"<td>{bookingModel.ngaydi}</td>";
+            strSanPham += $"<td>{bookingModel.songuoitoida}</td>";
+            strSanPham += $"<td>{diachi}</td>";
+            strSanPham += $"<td>{bookingModel.thanhtien}</td>";
+            strSanPham += "</tr>";
+            strSanPham += "</tbody></table>";
+            var strThongTinKhachHang = $@"
+            <p>Họ tên khách hàng: {bookingModel.HoTen}</p>
+            <p>Email: {bookingModel.Email}</p>
+            <p>Số điện thoại: {bookingModel.DienThoai}</p>
+            ";
+            var fullContent = $@"
+            <h2>Thông tin đặt phòng</h2>
+                {strSanPham}
+            <h2>Thông tin khách hàng</h2>
+                {strThongTinKhachHang}
+            ";
 
+            // Gửi email
+            var smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential("doducviet3012@gmail.com", "ebfwregutahnwhrj"),
+                EnableSsl = true,
+            };
+            var fromAddress = new MailAddress("doducviet3012@gmail.com", "Hotel");
+            var toAddress = new MailAddress(customerEmail);
+            var mailMessage = new MailMessage(fromAddress, toAddress)
+            {
+                Subject = "Phòng bạn được đặt thành công",
+                Body = fullContent,
+                IsBodyHtml = true
+            };
+            smtpClient.Send(mailMessage);
         }
         [HttpPost]
         public IActionResult ConfirmBooking(int maphong, BookingVM model, string payment = "COD")
@@ -162,63 +211,11 @@ namespace QLKhachSan.Controllers
                     };
                     return Redirect(_vnPayService.CreatePaymentUrl(HttpContext, vnPayModel));
                 }
+                else
+                {
+                        SendConfirmationEmail(model, email);
+                }
                 SaveBookingInfoToDatabase(customerID, model, maphong, payment);
-                var tenks = (from ks in db.KhachSans
-                             join p in db.Phongs on ks.MaKs equals p.MaKs
-                             where p.MaPhong == maphong
-                             select ks.TenKhachSan).FirstOrDefault();
-                var diachi = (from ks in db.KhachSans
-                              join p in db.Phongs on ks.MaKs equals p.MaKs
-                              where p.MaPhong == maphong
-                              select ks.DiaChi).FirstOrDefault();
-                var smtpClient = new SmtpClient("smtp.gmail.com")
-                {
-                    Port = 587,
-                    Credentials = new NetworkCredential("doducviet3012@gmail.com", "ebfwregutahnwhrj"),
-                    EnableSsl = true,
-
-                };
-
-                double tongtien = 0;
-                var strSanPham = "<table border='1'>";
-                strSanPham += "<thead><tr><th>Tên khách sạn</th><th>Tên phòng</th><th>Ngày đến</th><th>Ngày đi</th><th>Số người</th><th>Địa chỉ</th><th>Tổng tiền</th></tr></thead>";
-                strSanPham += "<tbody>";
-                strSanPham += "<tr>";
-                strSanPham += $"<td>{tenks}</td>";
-                strSanPham += $"<td>{model.tenphong}</td>";
-                strSanPham += $"<td>{model.ngayden}</td>";
-                strSanPham += $"<td>{model.ngaydi}</td>";
-                strSanPham += $"<td>{model.songuoitoida}</td>";
-                strSanPham += $"<td>{diachi}</td>";
-                strSanPham += $"<td>{model.thanhtien}</td>";
-                strSanPham += "</tr>";
-                strSanPham += "</tbody></table>";
-                var strThongTinKhachHang = $@"
-                        <p>Họ tên khách hàng: {ht}</p>
-                        <p>Email: {emailKH}</p>
-                        <p>Số điện thoại: {dienthoai}</p>
-                        ";
-                var fullContent = $@"
-                         <h2>Thông tin đặt phòng</h2>
-                              {strSanPham}
-                         <h2>Thông tin khách hàng</h2>
-                              {strThongTinKhachHang}
-                         ";
-                var fromAddress = new MailAddress("doducviet3012@gmail.com", "Hotel");
-
-                // Tạo địa chỉ email người nhận
-                var toAddress = new MailAddress(adressEmail);
-
-                // Tạo đối tượng MailMessage
-                var mailMessage = new MailMessage(fromAddress, toAddress)
-                {
-                    Subject = "Phòng bạn được đặt thành công",
-                    Body = fullContent,
-                    IsBodyHtml = true // Đặt true nếu bạn sử dụng HTML trong nội dung email
-                };
-
-                // Gửi email
-                smtpClient.Send(mailMessage);
                 return View(model);
             }
 
@@ -234,7 +231,7 @@ namespace QLKhachSan.Controllers
         {
             return View();
         }
-
+        private static bool sentmail = false;
         [Authorize]
         public IActionResult PaymentCallBack()
         {
@@ -257,7 +254,11 @@ namespace QLKhachSan.Controllers
                 bookingModel.Email = email;
             }
             SaveBookingInfoToDatabase(customerID, bookingModel, roomID, paymentMethod);
-            TempData["Message"] = $"Thanh toán VNP thành công";
+            if (!sentmail)
+            {
+                SendConfirmationEmail(bookingModel, email);
+                sentmail = true;
+            }
             return View("ConfirmBooking",bookingModel);
         }
     }

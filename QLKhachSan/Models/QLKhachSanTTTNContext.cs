@@ -17,7 +17,6 @@ namespace QLKhachSan.Models
         }
 
         public virtual DbSet<Blog> Blogs { get; set; } = null!;
-        public virtual DbSet<Csvc> Csvcs { get; set; } = null!;
         public virtual DbSet<Ctanh> Ctanhs { get; set; } = null!;
         public virtual DbSet<DatPhong> DatPhongs { get; set; } = null!;
         public virtual DbSet<DichVu> DichVus { get; set; } = null!;
@@ -31,7 +30,6 @@ namespace QLKhachSan.Models
         public virtual DbSet<Phong> Phongs { get; set; } = null!;
         public virtual DbSet<SuDungDichVu> SuDungDichVus { get; set; } = null!;
         public virtual DbSet<SuDungThietBi> SuDungThietBis { get; set; } = null!;
-        public virtual DbSet<TDoanhThu> TDoanhThus { get; set; } = null!;
         public virtual DbSet<ThietBi> ThietBis { get; set; } = null!;
         public virtual DbSet<TinhThanh> TinhThanhs { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
@@ -41,7 +39,7 @@ namespace QLKhachSan.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Data Source=VIET\\SQLEXPRESS;Initial Catalog=QLKhachSanTTTN;Integrated Security=True;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Data Source=VIET\\SQLEXPRESS01;Initial Catalog=QLKhachSanTTTN;Integrated Security=True;TrustServerCertificate=True");
             }
         }
 
@@ -53,9 +51,7 @@ namespace QLKhachSan.Models
 
                 entity.ToTable("Blog");
 
-                entity.Property(e => e.Idblog)
-                    .HasMaxLength(10)
-                    .HasColumnName("IDblog");
+                entity.Property(e => e.Idblog).HasColumnName("IDblog");
 
                 entity.Property(e => e.Anh).HasMaxLength(50);
 
@@ -71,13 +67,6 @@ namespace QLKhachSan.Models
                     .WithMany(p => p.Blogs)
                     .HasForeignKey(d => d.MaNv)
                     .HasConstraintName("FK_Blog_NhanVien");
-            });
-
-            modelBuilder.Entity<Csvc>(entity =>
-            {
-                entity.ToTable("CSVC");
-
-                entity.Property(e => e.Id).HasColumnName("id");
             });
 
             modelBuilder.Entity<Ctanh>(entity =>
@@ -205,8 +194,6 @@ namespace QLKhachSan.Models
 
                 entity.Property(e => e.Email).HasMaxLength(50);
 
-                entity.Property(e => e.LoaiKhachHang).HasMaxLength(50);
-
                 entity.Property(e => e.NgaySinh).HasColumnType("date");
 
                 entity.Property(e => e.Password).HasMaxLength(50);
@@ -237,7 +224,14 @@ namespace QLKhachSan.Models
 
                 entity.Property(e => e.DiaChi).HasMaxLength(50);
 
+                entity.Property(e => e.MaKh).HasColumnName("MaKH");
+
                 entity.Property(e => e.TenKhachSan).HasMaxLength(50);
+
+                entity.HasOne(d => d.MaKhNavigation)
+                    .WithMany(p => p.KhachSans)
+                    .HasForeignKey(d => d.MaKh)
+                    .HasConstraintName("FK_KhachSan_KhachHang");
 
                 entity.HasOne(d => d.MaTinhNavigation)
                     .WithMany(p => p.KhachSans)
@@ -251,9 +245,7 @@ namespace QLKhachSan.Models
 
                 entity.ToTable("LoaiPhong");
 
-                entity.Property(e => e.MaLp)
-                    .HasMaxLength(10)
-                    .HasColumnName("MaLP");
+                entity.Property(e => e.MaLp).HasColumnName("MaLP");
 
                 entity.Property(e => e.Anh).HasMaxLength(50);
 
@@ -330,9 +322,7 @@ namespace QLKhachSan.Models
 
                 entity.Property(e => e.MaKs).HasColumnName("MaKS");
 
-                entity.Property(e => e.MaLp)
-                    .HasMaxLength(10)
-                    .HasColumnName("MaLP");
+                entity.Property(e => e.MaLp).HasColumnName("MaLP");
 
                 entity.Property(e => e.TenPhong).HasMaxLength(50);
 
@@ -375,34 +365,25 @@ namespace QLKhachSan.Models
 
             modelBuilder.Entity<SuDungThietBi>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("SuDungThietBi");
 
-                entity.Property(e => e.MaLp)
-                    .HasMaxLength(10)
-                    .HasColumnName("MaLP");
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.MaLp).HasColumnName("MaLP");
 
                 entity.Property(e => e.MaTb).HasColumnName("MaTB");
 
                 entity.HasOne(d => d.MaLpNavigation)
-                    .WithMany()
+                    .WithMany(p => p.SuDungThietBis)
                     .HasForeignKey(d => d.MaLp)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SuDungThietBi_LoaiPhong");
 
                 entity.HasOne(d => d.MaTbNavigation)
-                    .WithMany()
+                    .WithMany(p => p.SuDungThietBis)
                     .HasForeignKey(d => d.MaTb)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SuDungThietBi_ThietBi");
-            });
-
-            modelBuilder.Entity<TDoanhThu>(entity =>
-            {
-                entity.ToTable("tDoanhThu");
-
-                entity.Property(e => e.Id).HasColumnName("id");
             });
 
             modelBuilder.Entity<ThietBi>(entity =>

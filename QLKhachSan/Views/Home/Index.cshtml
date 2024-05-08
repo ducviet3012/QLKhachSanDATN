@@ -4,7 +4,11 @@
     ViewData["Title"] = "Home Page";
     Layout = "_LayoutHome";
 }
-
+<link rel="stylesheet" href="~/css/style.css">
+@if (TempData["Message"] != null)
+{
+    <div class="notification">@TempData["Message"]</div>
+}
 <div class="row">
     @foreach(var item in Model)
     {
@@ -34,3 +38,33 @@
         </div>
     }
 </div>
+<div id="paginationContainer" style="margin: 0 auto">
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), new X.PagedList.Web.Common.PagedListRenderOptions()
+{
+    LiElementClasses = new List<String> { "page-item" },
+    PageClasses = new List<String> { "page-link" }
+})
+</div>
+<script>
+    $(document).ready(function () {
+        $(".notification").fadeIn().delay(5000).fadeOut();
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $(document).on("click", ".pagination a", function (e) {
+            e.preventDefault();
+            var url = $(this).attr("href");
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function (result) {
+                    $("#paginationContainer").html(result);
+                },
+                error: function () {
+                    alert("Failed to load data.");
+                }
+            });
+        });
+    });
+</script>

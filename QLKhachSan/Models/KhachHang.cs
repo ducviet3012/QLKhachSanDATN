@@ -9,6 +9,7 @@ namespace QLKhachSan.Models
         {
             Gopies = new HashSet<GopY>();
             HoaDons = new HashSet<HoaDon>();
+            KhachSans = new HashSet<KhachSan>();
         }
 
         public int MaKh { get; set; }
@@ -20,12 +21,12 @@ namespace QLKhachSan.Models
         public DateTime? NgaySinh { get; set; }
         public string? DiaChi { get; set; }
         public string? Sdt { get; set; }
-        public string? LoaiKhachHang { get; set; }
         public int? UserId { get; set; }
         public int? HieuLuc { get; set; }
 
         public virtual User? User { get; set; }
         public virtual ICollection<GopY> Gopies { get; set; }
         public virtual ICollection<HoaDon> HoaDons { get; set; }
+        public virtual ICollection<KhachSan> KhachSans { get; set; }
     }
 }

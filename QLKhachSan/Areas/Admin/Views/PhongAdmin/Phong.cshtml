@@ -3,7 +3,7 @@
 @model X.PagedList.IPagedList<PhongVM>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    ViewData["Title"] = "Phong";
+	ViewData["Title"] = "Phong";
 	Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
 }
 
@@ -45,7 +45,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							@foreach(var item in Model)
+							@foreach (var item in Model)
 							{
 								<tr>
 									<td>
@@ -73,9 +73,9 @@
 										</div>
 									</td>
 									<td>
-											<div>
-												<span class="fs-16">@item.MoTa</span>
-											</div>
+										<div>
+											<span class="fs-16">@item.MoTa</span>
+										</div>
 									</td>
 
 									<td>
@@ -94,8 +94,8 @@
 												</svg>
 											</a>
 											<div class="dropdown-menu">
-												<a class="dropdown-item" asp-controller="HomeAdmin" asp-action="SuaPhong" asp-route-id="@item.MaPhong">Edit</a>
-												<a class="dropdown-item" onclick="return confirm('Bạn có chắc chắn muốn xóa phòng này không?')" asp-controller="HomeAdmin" asp-action="XoaPhong" asp-route-id="@item.MaPhong">Delete</a>
+												<a class="dropdown-item" asp-controller="PhongAdmin" asp-action="SuaPhong" asp-route-id="@item.MaPhong">Edit</a>
+												<a class="dropdown-item" onclick="return confirm('Bạn có chắc chắn muốn xóa phòng này không?')" asp-controller="PhongAdmin" asp-action="XoaPhong" asp-route-id="@item.MaPhong">Delete</a>
 											</div>
 										</div>
 									</td>

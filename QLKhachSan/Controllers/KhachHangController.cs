@@ -8,6 +8,11 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
+using MessagePack;
+using QLKhachSan.Helpers;
+using System.Net.Mail;
+using System.Net;
+using QLKhachSan.ViewModels.Admin;
 
 namespace QLKhachSan.Controllers
 {
@@ -29,6 +34,11 @@ namespace QLKhachSan.Controllers
             if (ModelState.IsValid)
             {
                 var email = db.KhachHangs.FirstOrDefault(x => x.Email == model.Email);
+                if (!IsValidEmail(model.Email))
+                {
+                    TempData["Message"] = "Địa chỉ email không tồn tại";
+                    return View();
+                }
                 if (email != null)
                 {
                     TempData["Message"] = "Email đã tồn tại";
@@ -38,6 +48,11 @@ namespace QLKhachSan.Controllers
                 {
                     TempData["Message"] = "Mật khẩu không trùng nhau";
                     return View();
+                }
+                int userId = 1; 
+                if (model.LoaiTaiKhoan == "doanhnghiep")
+                {
+                    userId = 4;
                 }
                 KhachHang kh = new KhachHang
                 {
@@ -49,14 +64,27 @@ namespace QLKhachSan.Controllers
                     NgaySinh = model.NgaySinh,
                     DiaChi = model.DiaChi,
                     Sdt = model.Sdt,
-                    UserId = 1,
+                    UserId = userId,
                     HieuLuc = 0
                 };
                 db.Add(kh);
                 db.SaveChanges();
+                TempData["Message"] = "Đăng ký thành công";
                 return RedirectToAction("Index","Home");
             }
             return View();
+        }
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email; // Kiểm tra xem địa chỉ có khớp với cú pháp không
+            }
+            catch
+            {
+                return false; // Nếu có lỗi, địa chỉ email không hợp lệ
+            }
         }
         public IActionResult DangNhap(string? ReturnUrl)
         {
@@ -64,72 +92,262 @@ namespace QLKhachSan.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> DangNhap(DangNhapVM model, string? ReturnUrl)
-        {
-            ViewBag.ReturnUrl = ReturnUrl;
-            if (ModelState.IsValid)
-            {
-                var kh = db.KhachHangs.FirstOrDefault(x => x.Email == model.email);
+		public async Task<IActionResult> DangNhap(DangNhapVM model, string? ReturnUrl)
+		{
+			if (ModelState.IsValid)
+			{
+				var kh = db.KhachHangs.FirstOrDefault(x => x.Email == model.email);
+				var nv = db.NhanViens.FirstOrDefault(x => x.Email == model.email);
                 HttpContext.Session.SetString("email", model.email);
-                if (kh == null)
-                {
-                    TempData["Message"] = "Tài khoản không tồn tại";
-                    return View();
-                }
-                if (kh.HieuLuc == 1)
-                {
-                    TempData["Message"] = "Tài khoản đã bị khóa";
-                    return View();
-                }
-                else
-                {
-                    if (kh.Password != MD5Hash(model.password))
-                    {
-                        TempData["Message"] = "Mật khẩu không chính xác";
-                        return View();
-                    }
-                    else
-                    {
-                        if (kh.UserId == 1)
-                        {
-                            var claims = new List<Claim>
-                            {
-                                new Claim(ClaimTypes.Email, kh.Email),
-                                new Claim(ClaimTypes.Name, kh.TenKh),
-                                new Claim("CustomerID", kh.MaKh.ToString()),
-                                new Claim(ClaimTypes.Role,"Customer")
-                            };
-                            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-                            await HttpContext.SignInAsync(claimsPrincipal);
-                            if (Url.IsLocalUrl(ReturnUrl))
-                            {
-                                return Redirect(ReturnUrl);
-                            }
-                            else
-                            {
-                                return RedirectToAction("Index", "Home");
-                            }
-                            //return RedirectToAction("Index", "Home");
-                        }
-                    }
-                }
-            }
-            return View();
-        }
-        [HttpPost]
-        public IActionResult IsAuthenticated()
-        {
-            // Kiểm tra xem người dùng đã xác thực hay chưa
-            bool isAuthenticated = User.Identity.IsAuthenticated;
+                //if (string.IsNullOrEmpty(model.email) || string.IsNullOrEmpty(model.password) || string.IsNullOrEmpty(model.email) && string.IsNullOrEmpty(model.password))
+                //{
+                //    TempData["Message"] = "Tài khoản và mật khẩu không được để trống!";
+                //    return View();
+                //}
+                if (nv != null && nv.UserId == 3 || nv != null && nv.UserId == 2 )
+				{
+					if (nv.Password == MD5Hash(model.password))
+					{
+						// Đăng nhập thành công cho admin
+						var claims = new List<Claim>
+				{
+					new Claim(ClaimTypes.Email, nv.Email),
+					new Claim(ClaimTypes.Name, nv.TenNv),
+					new Claim(ClaimTypes.Role, "Admin")
+				};
+						var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+						var authProperties = new AuthenticationProperties
+						{
+							// Lưu session nếu cần thiết
+							IsPersistent = true
+						};
+						await HttpContext.SignInAsync(
+							CookieAuthenticationDefaults.AuthenticationScheme,
+							new ClaimsPrincipal(claimsIdentity),
+							authProperties);
+						var id = (from nv1 in db.NhanViens
+								  where nv1.Email == model.email
+								  select nv1.UserId).FirstOrDefault();
+						var idAsString = id.ToString();
+						HttpContext.Session.SetString("id", idAsString);
+                        return RedirectToAction("Index", "HomeAdmin", new { area = "admin" });
+					}
+					else
+					{
+						// Sai mật khẩu cho admin
+						TempData["Message"] = "Mật khẩu không chính xác";
+						return View();
+					}
+				}
 
-            return Json(new { isAuthenticated });
-        }
+				if (kh == null)
+				{
+					TempData["Message"] = "Tài khoản không tồn tại";
+					return View();
+				}
+
+				if (kh.HieuLuc == 1)
+				{
+					TempData["Message"] = "Tài khoản đã bị khóa";
+					return View();
+				}
+
+				// Xác thực cho khách hàng
+				if (kh.Password == MD5Hash(model.password))
+				{
+                    var IdKH = (from kh1 in db.KhachHangs
+                                where kh1.Email == model.email
+                                select kh1.UserId).FirstOrDefault();
+                    var IdKHString = IdKH.ToString();
+                    HttpContext.Session.SetString("idKH", IdKHString);
+                    var claims = new List<Claim>
+			        {
+				        new Claim(ClaimTypes.Email, kh.Email),
+				        new Claim(ClaimTypes.Name, kh.TenKh),
+				        new Claim("CustomerID", kh.MaKh.ToString()),
+				        new Claim(ClaimTypes.Role,"Customer")
+			        };
+					var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+					var authProperties = new AuthenticationProperties
+					{
+						// Lưu session nếu cần thiết
+						IsPersistent = true
+					};
+					await HttpContext.SignInAsync(
+						CookieAuthenticationDefaults.AuthenticationScheme,
+						new ClaimsPrincipal(claimsIdentity),
+						authProperties);
+                    if (ReturnUrl == "/admin")
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                    if (Url.IsLocalUrl(ReturnUrl))
+					{
+						return Redirect(ReturnUrl);
+					}
+					else
+					{
+                        TempData["Message"] = "Đăng nhập thành công";
+                        return RedirectToAction("Index", "Home");
+					}
+				}
+				else
+				{
+					TempData["Message"] = "Mật khẩu không chính xác";
+					return View();
+				}
+			}
+
+			return View();
+		}
         public async Task<IActionResult> DangXuat()
         {
             HttpContext.Session.Remove("email");
             await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+        [HttpGet]
+		public IActionResult QuenMatKhau()
+		{
+			return View();
+		}
+		[HttpPost]
+        public async Task<IActionResult> QuenMatKhau(LayMatKhauVM model, string email)
+        {
+            if (!IsValidEmail(email))
+            {
+                // Xử lý lỗi, có thể redirect về trang nhập lại email hoặc hiển thị thông báo lỗi.
+                TempData["Message"] = "Email không tồn tại";
+                return View("QuenMatKhau");
+            }
+            //bool check = VerifyEmail(email);
+            //if (check == false)
+            //{
+            //    TempData["Message"] = "Email không tồn tại";
+            //    return View("QuenMatKhau");
+            //}
+            var khachhang = db.KhachHangs.SingleOrDefault(p => p.Email == email);
+
+            if (khachhang != null)
+            {
+                HttpContext.Session.SetString("Email", model.Email);
+                var smtpClient = new SmtpClient("smtp.gmail.com")
+                {
+                    Port = 587,
+                    Credentials = new NetworkCredential("doducviet3012@gmail.com", "ebfwregutahnwhrj"),
+                    EnableSsl = true,
+
+                };
+                var resetLink = Url.Action("LayMatKhau", "KhachHang", new { email }, Request.Scheme);
+
+                // Tạo nội dung email với đường dẫn đặt lại mật khẩu
+                var emailContent = $"Nhấp vào <a href=\"{resetLink}\">đây</a> để đặt lại mật khẩu:";
+                var fromAddress = new MailAddress("doducviet3012@gmail.com", "KhachSanVIP");
+
+                // Tạo địa chỉ email người nhận
+                var toAddress = new MailAddress(email);
+
+                // Tạo đối tượng MailMessage
+                var mailMessage = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = "Đặt Lại Mật Khẩu",
+                    Body = emailContent,
+                    IsBodyHtml = true // Đặt true nếu bạn sử dụng HTML trong nội dung email
+                };
+
+                // Gửi email
+                smtpClient.Send(mailMessage);
+                TempData["Message"] = "Vui lòng check email của bạn";
+                return View("QuenMatKhau");
+            }
+            TempData["Message"] = "Email không tồn tại";
+            // Redirect hoặc hiển thị thông báo thành công.
+            return View("QuenMatKhau");
+        }
+        [HttpGet]
+		public IActionResult LayMatKhau()
+		{
+			return View();
+		}
+        [HttpPost]
+        public IActionResult LayMatKhau(LayMatKhauVM model, string email)
+        {
+            email = HttpContext.Session.GetString("Email");
+            var khachhang = db.KhachHangs.SingleOrDefault(p => p.Email == email);
+
+            // Kiểm tra xem khách hàng có tồn tại và email trùng khớp hay không
+            if (khachhang != null && string.Equals(khachhang.Email, email, StringComparison.OrdinalIgnoreCase))
+            {
+                // Thực hiện các thao tác khác với đối tượng khachhang
+                if (model.MatKhauMoi != model.ConfirmMK)
+                {
+                    TempData["Message"] = "Mật khẩu không trùng nhau";
+                }
+                else
+                {
+                    khachhang.Password = MD5Hash(model.MatKhauMoi);
+                    db.Update(khachhang);
+                    db.SaveChanges();
+                    return Redirect("/");
+                }
+            }
+            else
+            {
+                TempData["Message"] = "Email không tồn tại hoặc không trùng khớp";
+            }
+
+            return View("LayMatKhau");
+        }
+        public IActionResult DoiMK()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult DoiMK(LayMatKhauVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                string email = HttpContext.Session.GetString("email");
+                var khachhang = db.KhachHangs.SingleOrDefault(p => p.Email == email);
+                if (khachhang.Password != MD5Hash(model.MatKhauCu))
+                {
+                    TempData["Message"] = "Mật khẩu hiện tại không đúng!";
+                }
+                if (model.MatKhauMoi != model.ConfirmMK)
+                {
+                    TempData["Message"] = "Mật khẩu không trùng nhau!";
+                    return View();
+                }
+                else
+                {
+                    khachhang.Password = MD5Hash(model.MatKhauMoi);
+                    db.Update(khachhang);
+                    db.SaveChanges();
+                    return Redirect("/");
+                }
+            }
+            return View("ProFile");
+        }
+        public IActionResult LichSuDatPhong(LSDatPhongVM model)
+        {
+            var email = HttpContext.Session.GetString("email");
+            var result = (from kh in db.KhachHangs 
+                          join hd in db.HoaDons on kh.MaKh equals hd.MaKh
+                          join dp in db.DatPhongs on hd.SoHoaDon equals dp.SoHoaDon
+                          join p in db.Phongs on dp.MaPhong equals p.MaPhong
+                          join ks in db.KhachSans on p.MaKs equals ks.MaKs
+                          where kh.Email == email
+                          select new LSDatPhongVM
+                          {
+                              tenkh = kh.TenKh,
+                              ngayden = dp.NgayDen,
+                              ngaydi = dp.NgayDi,
+                              ngaythanhtoan = hd.NgayThanhToan,
+                              songuoi = dp.SoNguoi,
+                              tenks = ks.TenKhachSan,
+                              tenphong = p.TenPhong
+                          }).ToList();
+            return View(result);
         }
         [Authorize]
         public IActionResult ProFile()
@@ -142,6 +360,7 @@ namespace QLKhachSan.Controllers
             }
             return View();
         }
+        
         private string MD5Hash(string input)
         {
             using (MD5 md5hash = MD5.Create())

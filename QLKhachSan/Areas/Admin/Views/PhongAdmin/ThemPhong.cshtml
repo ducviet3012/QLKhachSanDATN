@@ -40,7 +40,7 @@
                 <label class="form-label">Mô tả</label>
                 <textarea class="form-control" rows="8" name="MoTa" id="comment"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary mt-3">Submit</button>
+            <button type="submit" class="btn btn-primary mt-3">Add</button>
         </form>
     </div>
 </div>
@@ -49,10 +49,10 @@
     $(document).ready(function () {
         $('#MaKS').change(function () {
             var selectedValue = $(this).val();
-            var url = '@Url.Action("ThemPhong", "HomeAdmin")' + '?maks=' + selectedValue;
+            var url = '@Url.Action("ThemPhong", "PhongAdmin")' + '?maks=' + selectedValue;
             console.log(selectedValue);
             $.ajax({
-                url: '@Url.Action("ThemPhong", "HomeAdmin")',
+                url: '@Url.Action("ThemPhong", "PhongAdmin")',
                 type: 'GET',
                 data: { maks: selectedValue },
                 success: function (data) {

@@ -36,6 +36,7 @@
     <link rel="stylesheet" href="~/css/blueimp-gallery.min.css">
     <link rel="stylesheet" href="~/style.min.css">
     <link id="cssTheme" rel="stylesheet" href="~/skins/style-default.css">
+    <link rel="stylesheet" href="~/css/profile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 </head>
@@ -101,7 +102,7 @@
                             <ul class="nav nav-panel">
                                 @if (User.Identity != null && User.Identity.IsAuthenticated)
                                 {
-                                    <a asp-action="ProFile" asp-controller="KhachHang" class="my-auto">
+                                    <a asp-action="ProFile" asp-controller="KhachHang" class="my-auto user-profile">
                                         <span>@User.Identity.Name</span>
                                         <i class="fa fa-user" style="font-size:36px"></i>
                                     </a>
@@ -110,9 +111,6 @@
                                 {
                                     <li class="nav-item d-flex">
                                         <a class="nav-link btn btn-light " asp-controller="KhachHang" asp-action="DangNhap"><i class="text-gray icon icon-user mr-2"></i><span>log in</span></a>
-                                    </li>
-                                    <li class="nav-item d-flex">
-                                        <a class="nav-link btn btn-light " asp-controller="KhachHang" asp-action="DangKy"><i class="text-gray icon icon-login mr-2"></i><span>sign up</span></a>
                                     </li>
                                 }
                             </ul>

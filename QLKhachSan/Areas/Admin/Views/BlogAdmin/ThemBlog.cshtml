@@ -1,0 +1,31 @@
+﻿@model QLKhachSan.ViewModels.BlogVM
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "ThemBlog";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="card-body">
+    <div class="basic-form">
+        <form method="post" asp-controller="BlogAdmin" asp-action="ThemBlog" enctype="multipart/form-data">
+            <div class="text-danger">@TempData["Message"]</div>
+@*             <div class="mb-3">
+                <input hidden type="text" class="form-control" name="IDBlog" value="@Model.IDBlog" readonly>
+            </div> *@
+            <div class="mb-3">
+                <label class="form-label">Tiêu đề</label>
+                <input type="text" class="form-control" name="TieuDe" placeholder="Tiêu đề ..">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Thông tin</label>
+                <input class="form-control form-control" name="ThongTin" type="text" placeholder="Thông tin ..">
+            </div>
+            <div class="mb-3">
+                <label for="formFileSm" class="form-label">Ảnh</label>
+                <input class="form-control form-control-sm" name="Anh" id="formFileSm" type="file">
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Add</button>
+        </form>
+    </div>
+</div>
+
+

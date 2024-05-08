@@ -10,7 +10,7 @@ namespace QLKhachSan.ViewComponents
         public KhachSanViewComponent(QLKhachSanTTTNContext context) => db = context;
         public IViewComponentResult Invoke()
         {
-            var data = db.KhachSans.Select(ks => new KhachSanVM
+            var data = db.KhachSans.Where(ks => ks.Duyet == 1).Select(ks => new KhachSanVM
             {
                 MaKS = ks.MaKs,
                 TenKS = ks.TenKhachSan,

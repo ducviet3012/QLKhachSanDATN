@@ -29,8 +29,8 @@ namespace QLKhachSan.Controllers
                                     MaTinh = t.MaTinh,
                                     TenTinh = t.TenTinh,
                                     Anh = t.Anh,
-                                    SoLuongKhachSans = db.KhachSans.Count(khachSan => khachSan.MaTinh == t.MaTinh)
-                                };
+									SoLuongKhachSans = db.KhachSans.Count(khachSan => khachSan.MaTinh == t.MaTinh && khachSan.Duyet == 1)
+								};
             PagedList<TinhThanhVM> pagedListResult = new PagedList<TinhThanhVM>(listSanPhamVM, pageNumber, pageSize);
             var hotel = (from ks in db.KhachSans
                          select ks.TenKhachSan).ToList();
@@ -48,7 +48,7 @@ namespace QLKhachSan.Controllers
             //             where ks.MaTinh ==matinh
             //             select lp.Gia).Average();
             var listKS = db.KhachSans.AsTracking()
-                .Where(x => x.MaTinh == matinh)
+                .Where(x => x.MaTinh == matinh && x.Duyet == 1)
                 .OrderBy(x => x.TenKhachSan)
                 .Join(db.TinhThanhs, ks => ks.MaTinh, t => t.MaTinh, (ks, t) => new KhachSanVM
                 {
