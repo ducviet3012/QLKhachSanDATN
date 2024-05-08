@@ -1,0 +1,75 @@
+﻿@model IEnumerable<QLKhachSan.ViewModels.Admin.HoaDonVM>
+@{
+    ViewData["Title"] = "HoaDonKS";
+    Layout = "_LayoutProfile";
+}
+<div>
+
+    <select id="selectedHotel">
+        <option value="" selected>Chọn khách sạn</option>
+        @foreach (var khachsan in ViewBag.ks)
+        {
+            <option value="@khachsan.MaKs">@khachsan.TenKhachSan</option>
+        }
+    </select>
+</div>
+<div class="personal__account-security container">
+    <h2 class="text-center mb-4">Hóa đơn</h2>
+    <div class="table-responsive">
+        <table class="table table-striped" style="border-color: black;">
+            <thead>
+                <tr class="header-row" style="color: black;">
+                    <th scope="col">STT</th>
+                    <th scope="col">Tên phòng</th>
+                    <th scope="col">Tên khách hàng</th>
+                    <th scope="col">Số người</th>
+                    <th scope="col">Ngày đến</th>
+                    <th scope="col">Ngày đi</th>
+                    <th scope="col">Ngày thanh toán</th>
+                </tr>
+            </thead>
+            <tbody id="invoiceList">
+                @{
+                    var count = 1;
+                }
+                @foreach (var item in Model)
+                {
+                    <tr style="color: black;">
+                        <td>@count</td>
+                        <td>@item.tenphong</td>
+                        <td>@item.tenkh</td>
+                        <td>@item.songuoi</td>
+                        <td>@item.ngayden</td>
+                        <td>@item.ngaydi</td>
+                        <td>@item.ngaythanhtoan</td>
+                    </tr>
+                    count++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Kiểm tra nếu có giá trị đã lưu trong local storage
+        var selectedHotelId = localStorage.getItem('HotelId');
+        if (selectedHotelId) {
+            // Đặt giá trị đã lưu vào dropdown
+            $('#selectedHotel').val(selectedHotelId);
+        }
+
+        // Sự kiện khi giá trị của dropdown thay đổi
+        $('#selectedHotel').change(function () {
+            var selectedHotelId = $(this).val();
+            if (selectedHotelId) {
+                // Lưu giá trị mới vào local storage
+                localStorage.setItem('HotelId', selectedHotelId);
+                // Tạo URL mới với giá trị maks và chuyển hướng trang đến URL đó
+                var newUrl = '@Url.Action("HoaDonKS", "DoanhNghiep")?maks=' + selectedHotelId;
+                window.location.href = newUrl;
+            }
+        });
+    });
+</script>

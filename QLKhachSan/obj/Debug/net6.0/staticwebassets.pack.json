@@ -1245,12 +1245,20 @@
       "PackagePath": "staticwebassets\\css\\nouislider.min.css"
     },
     {
+      "Id": "D:\\DATN\\QLKhachSan\\QLKhachSan\\wwwroot\\css\\profile.css",
+      "PackagePath": "staticwebassets\\css\\profile.css"
+    },
+    {
       "Id": "D:\\DATN\\QLKhachSan\\QLKhachSan\\wwwroot\\css\\select2.min.css",
       "PackagePath": "staticwebassets\\css\\select2.min.css"
     },
     {
       "Id": "D:\\DATN\\QLKhachSan\\QLKhachSan\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
+    },
+    {
+      "Id": "D:\\DATN\\QLKhachSan\\QLKhachSan\\wwwroot\\css\\style.css",
+      "PackagePath": "staticwebassets\\css\\style.css"
     },
     {
       "Id": "D:\\DATN\\QLKhachSan\\QLKhachSan\\wwwroot\\css\\swiper.min.css",
@@ -1359,6 +1367,10 @@
     {
       "Id": "D:\\DATN\\QLKhachSan\\QLKhachSan\\wwwroot\\img\\Images\\anhks7.jpeg",
       "PackagePath": "staticwebassets\\img\\Images\\anhks7.jpeg"
+    },
+    {
+      "Id": "D:\\DATN\\QLKhachSan\\QLKhachSan\\wwwroot\\img\\Images\\blog.jpg",
+      "PackagePath": "staticwebassets\\img\\Images\\blog.jpg"
     },
     {
       "Id": "D:\\DATN\\QLKhachSan\\QLKhachSan\\wwwroot\\img\\Images\\danang_nen.jpg",
@@ -1491,6 +1503,10 @@
     {
       "Id": "D:\\DATN\\QLKhachSan\\QLKhachSan\\wwwroot\\img\\Images\\ks_nhatrang2.jpg",
       "PackagePath": "staticwebassets\\img\\Images\\ks_nhatrang2.jpg"
+    },
+    {
+      "Id": "D:\\DATN\\QLKhachSan\\QLKhachSan\\wwwroot\\img\\Images\\logo.Gif.webp",
+      "PackagePath": "staticwebassets\\img\\Images\\logo.Gif.webp"
     },
     {
       "Id": "D:\\DATN\\QLKhachSan\\QLKhachSan\\wwwroot\\img\\Images\\nhatrang_nen.jpg",

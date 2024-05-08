@@ -8,9 +8,10 @@ namespace QLKhachSan.Models
         public LoaiPhong()
         {
             Phongs = new HashSet<Phong>();
+            SuDungThietBis = new HashSet<SuDungThietBi>();
         }
 
-        public string MaLp { get; set; } = null!;
+        public int MaLp { get; set; }
         public int? MaKs { get; set; }
         public string? TenLp { get; set; }
         public int? SoNguoiToiDa { get; set; }
@@ -21,5 +22,6 @@ namespace QLKhachSan.Models
 
         public virtual KhachSan? MaKsNavigation { get; set; }
         public virtual ICollection<Phong> Phongs { get; set; }
+        public virtual ICollection<SuDungThietBi> SuDungThietBis { get; set; }
     }
 }

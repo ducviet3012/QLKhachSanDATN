@@ -5,7 +5,7 @@ namespace QLKhachSan.Models
 {
     public partial class Blog
     {
-        public string Idblog { get; set; } = null!;
+        public int Idblog { get; set; }
         public int? MaNv { get; set; }
         public string? Anh { get; set; }
         public string? TieuDe { get; set; }

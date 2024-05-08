@@ -1,239 +1,187 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QLKhachSan.Models;
 using QLKhachSan.ViewModels;
 using QLKhachSan.ViewModels.Admin;
+using System.Runtime.Intrinsics.Arm;
 using X.PagedList;
+
 
 namespace QLKhachSan.Areas.Admin.Controllers
 {
     [Area("admin")]
+    [Authorize(Roles = "Admin")]
     public class HomeAdminController : Controller
     {
         QLKhachSanTTTNContext db = new QLKhachSanTTTNContext();
         [Route("admin")]
         public IActionResult Index()
         {
-            return View();
-        }
-        [Route("phong")]
-        public IActionResult Phong(int? page)
-        {
-			int pageSize = 8;
-			int pageNumber = page == null || page < 0 ? 1 : page.Value;
-            var phong = (from p in db.Phongs
-                         join lp in db.LoaiPhongs on p.MaLp equals lp.MaLp
-                         join ks in db.KhachSans on p.MaKs equals ks.MaKs
-                         select new PhongVM
-                         {
-                             MaPhong = p.MaPhong,
-                             TenPhong = p.TenPhong,
-                             Anh = p.Anh,
-                             MoTa = p.MoTa,
-                             TenLP = lp.TenLp,
-                             TenKS = ks.TenKhachSan
-                         }).OrderBy(x=>x.MaPhong);
-   //         var datphong = (from p in db.Phongs
-   //                         join dp in db.DatPhongs on p.MaPhong equals dp.MaPhong
-   //                         select new DatPhongVM
-   //                         {
-   //                             NgayDen = dp.NgayDen,
-   //                             NgayDi = dp.NgayDi
-   //                         });
-			//var viewModel = new PhongDetailVM
-			//{
-			//	phongvm = phong.ToList(),
-			//	datphongvm = datphong.ToList(),
-			//};
-			// Truyền danh sách 'viewModel' thay vì đối tượng 'viewModel'
-			PagedList<PhongVM> lst = new PagedList<PhongVM>(phong, pageNumber, pageSize);
-
-			return View(lst);
-        }
-		[Route("themphong")]
-		[HttpGet]
-		public IActionResult ThemPhong(int? maks)
-        {
-            var lastMaPhong = db.Phongs.OrderByDescending(p => p.MaPhong).FirstOrDefault()?.MaPhong ?? 0;
-            var nextMaPhong = lastMaPhong + 1;
-            ViewBag.NextMaPhong = nextMaPhong;
-            ViewBag.MaKs = new SelectList(db.KhachSans.ToList(), "MaKs", "TenKhachSan");
-            var loaiPhongs = from lp in db.LoaiPhongs
-                             where lp.MaKs == maks 
-                             select new
-                             {
-                                 lp.MaLp,
-                                 lp.TenLp
-                             };
-            ViewBag.MaLp = new SelectList(loaiPhongs.ToList(), "MaLp", "TenLp");
-            return View();
+            var email = HttpContext.Session.GetString("email");
+			var ten = (from nv in db.NhanViens
+					   where nv.Email == email
+					   select nv.TenNv).FirstOrDefault();
+			ViewBag.ten = ten;
+			return View();
 		}
-        [Route("themphong")]
-        [HttpPost]
-        public IActionResult ThemPhong(PhongVM model,IFormFile Anh,List<IFormFile> AnhDetail)
+		[Route("khachsan")]
+        public IActionResult KhachSan(int? page)
         {
-             if (ModelState.IsValid)
-            {
-				bool isPhongAdded = false;
-				// Lấy tên tệp
-				var fileName = Path.GetFileName(Anh.FileName);
-                    // Lưu tệp vào thư mục trên máy chủ
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot","img", "Images", fileName);
+            int pageSize = 8;
+            int pageNumber = page == null || page < 0 ? 1 : page.Value;
+            var khachsan = (from ks in db.KhachSans
+                            join tt in db.TinhThanhs on ks.MaTinh equals tt.MaTinh
+                            select new KhachSanVM
+                            {
+                                MaKS = ks.MaKs,
+                                TenKS = ks.TenKhachSan,
+                                Anh = ks.Anh,
+                                TenTinh = tt.TenTinh,
+                                DiaChi = ks.DiaChi,
+                                Duyet = ks.Duyet,
+                                Mota = ks.MoTa
+                            }).OrderBy(x => x.MaKS);
+            PagedList<KhachSanVM> lst = new PagedList<KhachSanVM>(khachsan, pageNumber, pageSize);
 
+            return View(lst);
+        }
+		[Route("themks")]
+        [HttpGet]
+        public IActionResult ThemKS()
+        {
+				var lastMaKS = db.Phongs.OrderByDescending(p => p.MaPhong).FirstOrDefault()?.MaPhong ?? 0;
+				var nextMaKS = lastMaKS + 1;
+				ViewBag.nextMaKS = nextMaKS;
+				return View();
+        }
+        [Route("themks")]
+        [HttpPost]
+		public IActionResult ThemKS(KhachSanVM model, IFormFile Anh)
+        {
+            if (ModelState.IsValid)
+            {
+                var fileName = Path.GetFileName(Anh.FileName);
+                // Lưu tệp vào thư mục trên máy chủ
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "Images", fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    Anh.CopyTo(stream);
+                }
+                var matinh = (from tt in db.TinhThanhs
+                              where tt.TenTinh == model.TenTinh
+                              select tt.MaTinh).FirstOrDefault();
+                var ks = new KhachSan
+                {
+                    MaKs = model.MaKS,
+                    MaTinh = matinh,
+                    TenKhachSan = model.TenKS,
+                    Anh = fileName,
+                    DiaChi = model.DiaChi,
+                    MoTa = model.Mota,
+                    Duyet = 0
+                };
+                db.Add(ks);
+                db.SaveChanges();
+                return RedirectToAction("KhachSan");
+            }
+            return View();
+        }
+
+        [Route("suaks")]
+        [HttpGet]
+        public IActionResult SuaKS(int id)
+        {
+            var khachsan = (from ks in db.KhachSans
+                            join tt in db.TinhThanhs on ks.MaTinh equals tt.MaTinh
+                            where ks.MaKs == id
+                            select new KhachSanVM
+                            {
+                                MaKS = ks.MaKs,
+                                TenKS = ks.TenKhachSan,
+                                MaTinh = ks.MaTinh,
+                                DiaChi = ks.DiaChi,
+                                Anh = ks.Anh,
+                                Mota = ks.MoTa,
+                                TenTinh = tt.TenTinh
+                            }).FirstOrDefault();
+            return View(khachsan);
+        }
+        [Route("suaks")]
+        [HttpPost]
+        public IActionResult SuaKS(KhachSanVM model, IFormFile Anh)
+        {
+            var ks = db.KhachSans.FirstOrDefault(p => p.MaKs == model.MaKS);
+            var matinh = (from tt in db.TinhThanhs
+                        where tt.TenTinh == model.TenTinh
+                        select tt.MaTinh).FirstOrDefault();
+            if (ks != null)
+            {
+                if (Anh != null && Anh.Length > 0)
+                {
+                    var filename = Path.GetFileName(Anh.FileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "Images", filename);
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         Anh.CopyTo(stream);
                     }
-				foreach (var file in AnhDetail)
-                {
-                    if (file != null && file.Length > 0)
-                    {
-                        var fileName1 = Path.GetFileName(file.FileName);
-                        var filePath1 = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "Images", fileName1);
-
-                        using (var stream = new FileStream(filePath1, FileMode.Create))
-                        {
-                            file.CopyTo(stream);
-                        }
-                        var check = db.Ctanhs
-                            .Where(ctanh => ctanh.TenAnh.Contains(fileName1))
-                            .Count();
-                        if (check == 0)
-                        {
-                            if (!isPhongAdded)
-                            {
-								var phong = new Phong
-								{
-									MaKs = model.MaKS,
-									MaLp = model.MaLP,
-									TenPhong = model.TenPhong,
-									Anh = fileName,
-									MoTa = model.MoTa
-								};
-								db.Add(phong);
-								db.SaveChanges();
-                                isPhongAdded = true;
-							}
-                            var anhChiTiet = new Ctanh
-                            {
-                                MaPhong = model.MaPhong, // Thay bằng ID của phòng chính
-                                TenAnh = fileName1
-                            };
-                            // Lưu thông tin vào cơ sở dữ liệu
-                            db.Add(anhChiTiet);
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            TempData["Message"] = "Ảnh chi tiết đã tồn tại";
-                            return RedirectToAction("ThemPhong");
-                        }
-                    }
+                    ks.Anh = filename;
                 }
-                return RedirectToAction("Phong");
-            }
-            return View(model);
-        }
+                ks.TenKhachSan = model.TenKS;
+                ks.MaTinh = matinh;
+                ks.DiaChi = model.DiaChi;
+                ks.MoTa = model.Mota;
 
-        [Route("suaphong")]
-        [HttpGet]
-        public IActionResult SuaPhong(int id)
-        {
-            ViewBag.MaKs = new SelectList(db.KhachSans.ToList(), "MaKs", "TenKhachSan");
-            ViewBag.MaLp = new SelectList(db.LoaiPhongs.ToList(), "MaLp", "TenLp");
-            var phong = (from p in db.Phongs
-                        join anh in db.Ctanhs on p.MaPhong equals anh.MaPhong
-                        where p.MaPhong == id
-                        select new PhongVM
-                        {
-                            MaPhong = p.MaPhong,
-                            TenPhong = p.TenPhong,
-                            MaKS = p.MaKs,
-                            MaLP = p.MaLp,
-                            Anh = p.Anh,
-                            MoTa = p.MoTa,
-                            AnhDetail = anh.TenAnh
-                        }).FirstOrDefault();
-            return View(phong);
+                db.Update(ks);
+                db.SaveChanges();
+                return RedirectToAction("KhachSan");
+            }
+            return View();
         }
-        [Route("suaphong")]
+        [Route("Duyet")]
         [HttpPost]
-        public IActionResult SuaPhong(PhongVM model, IFormFile Anh , List<IFormFile> AnhDetail)
+        public IActionResult Duyet(int maKS,int newValue)
         {
-			var phongToUpdate = db.Phongs.FirstOrDefault(p => p.MaPhong == model.MaPhong);
-            bool isUpdateAnh = false;
-			if (phongToUpdate != null)
+			var khachSan = db.KhachSans.Find(maKS);
+			if (khachSan != null)
 			{
-				if (Anh != null && Anh.Length > 0)
-				{
-					var filename = Path.GetFileName(Anh.FileName);
-					var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "Images", filename);
-					using (var stream = new FileStream(filePath, FileMode.Create))
-					{
-						Anh.CopyTo(stream);
-					}
-					phongToUpdate.Anh = filename;
-				}
-				phongToUpdate.TenPhong = model.TenPhong;
-				phongToUpdate.MaKs = model.MaKS;
-				phongToUpdate.MaLp = model.MaLP;
-				phongToUpdate.MoTa = model.MoTa;
-
-				db.Update(phongToUpdate);
+				khachSan.Duyet = newValue;
 				db.SaveChanges();
-				var oldCtanhs = db.Ctanhs.Where(x => x.MaPhong == model.MaPhong).ToList();
-				foreach (var oldCtanh in oldCtanhs)
-				{
-					db.Remove(oldCtanh);
-				}
-				foreach (var file in AnhDetail)
-				{
-					if (file != null && file.Length > 0)
-					{
-						var fileName1 = Path.GetFileName(file.FileName);
-						var filePath1 = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "Images", fileName1);
-
-						using (var stream = new FileStream(filePath1, FileMode.Create))
-						{
-							file.CopyTo(stream);
-						}
-
-						// Tạo một chi tiết ảnh mới
-						var newCtanh = new Ctanh
-						{
-							MaPhong = model.MaPhong,
-							TenAnh = fileName1
-						};
-
-						// Thêm chi tiết ảnh mới vào cơ sở dữ liệu
-						db.Add(newCtanh);
-						db.SaveChanges();
-					}
-				}
-				TempData["Message"] = "Cập nhật phòng thành công.";
-				return RedirectToAction("Phong");
+				return Json("Cập nhật thành công!");
 			}
-			else
-			{
-				TempData["ErrorMessage"] = "Không tìm thấy phòng để cập nhật.";
-				return RedirectToAction("SuaPhong");
-			}
-        }
-        [Route("xoaphong")]
-        [HttpGet]
-        public IActionResult XoaPhong(int id)
+			return Json("Không tìm thấy khách sạn!");
+		}
+
+        [Route("doanhthu")]
+        public IActionResult DoanhThu(int? nam)
         {
-            var anh = db.Ctanhs.Where(x => x.MaPhong == id);
-            if(anh.Any())
+            var result = (from hd in db.HoaDons
+                          join dp in db.DatPhongs on hd.SoHoaDon equals dp.SoHoaDon
+                          join p in db.Phongs on dp.MaPhong equals p.MaPhong
+                          join lp in db.LoaiPhongs on p.MaLp equals lp.MaLp
+                          where hd.NgayThanhToan.Value.Year == nam
+                          group new { hd, dp, p, lp } by new { hd.NgayThanhToan.Value.Month, hd.NgayThanhToan.Value.Year } into g
+                          select new DoanhThuVM
+                          {
+                              Nam = g.Key.Year,
+                              Thang = g.Key.Month,
+                              TongTien = g.Sum(x => (decimal)(x.lp.Gia * (x.dp.NgayDi.Value.Day - x.dp.NgayDen.Value.Day + 1))*40/100)
+                          }).ToList();
+            ViewBag.nam = nam;
+            return View(result);
+        }
+	}
+    public class CustomAuthorizeAttribute : AuthorizeAttribute, IAuthorizationFilter
+    {
+        public void OnAuthorization(AuthorizationFilterContext context)
+        {
+            if (!context.HttpContext.User.Identity.IsAuthenticated)
             {
-                db.RemoveRange(anh);
+                context.HttpContext.Response.Redirect("/KhachHang/DangNhap");
             }
-            db.Remove(db.DatPhongs.Find(id));
-            db.Remove(db.Phongs.Find(id));
-            db.SaveChanges();
-            TempData["Message"] = "Đã xóa phòng thành công";
-            return RedirectToAction("Phong");
         }
     }
 }

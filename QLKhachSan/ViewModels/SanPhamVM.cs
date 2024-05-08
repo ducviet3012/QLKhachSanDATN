@@ -5,7 +5,7 @@
         public int MaPhong { get; set; }
         public string? TenPhong { get; set; }
         public string? TinhTrang { get; set; }
-        public string? MaLp { get; set; }
+        public int? MaLp { get; set; }
         public string? Anh { get; set; }
         public double? Gia { get; set; }
         public int? SoNguoiToiDa { get; set; }

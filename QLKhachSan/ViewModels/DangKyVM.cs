@@ -8,6 +8,7 @@
         public string? Cccd { get; set; }
         public string? Email { get; set; }
         public string? Password { get; set; }
+        public string? LoaiTaiKhoan {  get; set; }
         public string? ConfirmPassword { get; set; }
         public DateTime? NgaySinh { get; set; }
         public string? DiaChi { get; set; }

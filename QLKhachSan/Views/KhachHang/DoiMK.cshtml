@@ -1,0 +1,29 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="personal__account-security container">
+        <form method="post" asp-action="DoiMK">
+            <div class="col-12">
+                <div class="item">
+                    <span class="label">Mật khẩu hiện tại:</span>
+                    <input type="password" class="form-control" name="MatKhauCu" />
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="item">
+                    <span class="label">Mật khẩu mới:</span>
+                    <input type="password" class="form-control" name="MatKhauMoi" />
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="item">
+                    <span class="label">Xác nhận mật khẩu mới:</span>
+                    <input type="password" class="form-control" name="ConfirmMK" />
+                </div>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
+            </div>
+        </form>
+</div>

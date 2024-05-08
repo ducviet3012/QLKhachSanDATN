@@ -1,0 +1,66 @@
+﻿@model QLKhachSan.ViewModels.Admin.PhongVM
+@{
+    ViewData["Title"] = "ThemPhong";
+    Layout = "_LayoutProfile";
+}
+
+<div class="personal__account-security container">
+    <div class="basic-form">
+        <form method="post" asp-action="ThemPhong" enctype="multipart/form-data">
+            <div class="text-danger">@TempData["Message"]</div>
+            <div class="mb-3">
+                <input hidden type="text" class="form-control" name="MaPhong" value="@ViewBag.NextMaPhong" readonly>
+            </div>
+            <div class="mb-3">
+                <label class="form-label text-dark">Tên phòng</label>
+                <input type="text" class="form-control" name="TenPhong" placeholder="Tên phòng ..">
+            </div>
+            <div class="mb-3">
+                <label asp-for="MaKS" class="form-label text-dark">Tên KS</label>
+                <select id="MaKS" asp-for="MaKS" name="MaKS" class="default-select form-control wide mb-3" asp-items="ViewBag.MaKs">
+                    <option value="">Chọn Tên KS</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label asp-for="MaLP" class="form-label text-dark">Tên LP</label>
+                <select id="MaLP" asp-for="MaLP" name="MaLP" class="default-select form-control wide mb-3" asp-items="ViewBag.MaLp">
+                    <option value="">Chọn Tên LP</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="formFileSm" class="form-label text-dark">Ảnh đại diện</label>
+                <input class="form-control form-control-sm" name="Anh" id="formFileSm" type="file">
+            </div>
+            <div class="mb-3">
+                <label for="formFile1" class="form-label text-dark">Ảnh chi tiết phòng</label>
+                <input class="form-control form-control-sm" name="AnhDetail" id="formFile1" type="file" multiple>
+            </div>
+            <div class="mb-3">
+                <label class="form-label text-dark">Mô tả</label>
+                <textarea class="form-control" rows="8" name="MoTa" id="comment"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Add</button>
+        </form>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#MaKS').change(function () {
+            var selectedValue = $(this).val();
+            var url = '@Url.Action("ThemPhong", "DoanhNghiep")' + '?maks=' + selectedValue;
+            console.log(selectedValue);
+            $.ajax({
+                url: '@Url.Action("ThemPhong", "DoanhNghiep")',
+                type: 'GET',
+                data: { maks: selectedValue },
+                success: function (data) {
+                    window.location.href = url;
+                },
+                error: function () {
+                    alert('Đã xảy ra lỗi khi gửi yêu cầu.');
+                }
+            });
+        });
+    });
+</script>

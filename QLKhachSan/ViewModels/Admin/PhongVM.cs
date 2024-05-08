@@ -5,7 +5,7 @@
 		public int MaPhong {  get; set; }
 		public int? MaKS { get; set; }
 		public string? TenKS { get; set; }
-		public string? MaLP { get; set; }
+		public int? MaLP { get; set; }
         public string? TenLP { get; set; }
         public string? TenPhong { get; set; }
 		public string? Anh { get; set; }
